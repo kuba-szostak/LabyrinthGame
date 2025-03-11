@@ -17,6 +17,4 @@ class Program
     {
         DisplayManager.StartProgram();
     }
-
-   
 }

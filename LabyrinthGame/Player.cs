@@ -175,9 +175,6 @@ namespace LabyrinthGame
             Console.Clear();
         }
 
-
-       
-
         public void Equip(IWeapon weapon, bool leftHandFlag)
         {
             if (weapon.IsTwoHanded)
@@ -227,10 +224,30 @@ namespace LabyrinthGame
             }
         }
 
+        public void Unequip(bool leftHandFlag)
+        {
+            if(LeftHand != null && LeftHand == RightHand) // two handed weapon
+            {
+                Inventory.Add(LeftHand);
+                LeftHand = null;
+                RightHand = null;
+            }
+            if(leftHandFlag && LeftHand != null) // unequiping item from left hand
+            {
+                Inventory.Add(LeftHand);
+                LeftHand = null;
+            }
+            if(!leftHandFlag && RightHand != null)
+            {
+                Inventory.Add(RightHand);
+                RightHand = null; 
+            }
+        }
+
         private void EquipFromInventory(bool leftHandFlag)
         {
             var weapons = Inventory.OfType<IWeapon>().ToList();
-            if (weapons.Count == 0)
+            if (weapons.Count == 0 && LeftHand == null && RightHand == null)
             {
                 Console.Beep();
                 return;
@@ -238,16 +255,22 @@ namespace LabyrinthGame
 
             Console.Clear();
             Console.WriteLine($"Select weapon to place in {(leftHandFlag ? "left" : "right")} hand... ");
+            Console.WriteLine($"\t0. Unequip current item");
             for (int i = 0; i < weapons.Count; i++)
             {
                 var wpn = weapons[i];
-                Console.WriteLine($"{i + 1}. {wpn.GetName()} (Damage: {wpn.Damage})");
+                Console.WriteLine($"\t{i + 1}. {wpn.GetName()} (Damage: {wpn.Damage})");
             }
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';
-
-            if (index >= 0 && index < weapons.Count)
+            
+            if(index == -1) // case user presses '0'
+            {
+                Unequip(leftHandFlag);
+                RecalculateAttributes();
+            }
+            else if (index >= 0 && index < weapons.Count)
             {
                 IWeapon chosenOne = weapons[index];
                 Inventory.RemoveAt(index);
