@@ -1,30 +1,22 @@
 ﻿using LabyrinthGame;
+using LabyrinthGame.Items;
+using LabyrinthGame.Items.Decorators;
+using LabyrinthGame.Items.Weapons;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+
+//Some fragments of my code are inspirated from
+//https://github.com/WUT-MiNI/P3A_24Z_01189011_Lab06 
+//https://stackoverflow.com/questions/410227/test-if-object-implements-interface
+//https://stackoverflow.com/questions/69235748/oop-how-to-know-the-objects-type-in-this-game-design
 
 class Program
 {
     public static void Main(String[] Args)
     {
-        Map map = new Map(40, 20);
-
-        Point position = new Point(1, 1);
-        Player player = new Player(position, map);
-
-        Console.CursorVisible = false;
-
-        Console.WriteLine("Press ESC to exit\n");
-
-        while (true)
-        {
-            Console.SetCursorPosition(0, 0);
-            map.PrintMap(player);
-
-            Console.SetCursorPosition(map.width + 2, 0);
-            Console.WriteLine("Press ESC to exit");
-
-            player.ProcessMovement();
-            
-        }
+        DisplayManager.StartProgram();
     }
+
+   
 }
