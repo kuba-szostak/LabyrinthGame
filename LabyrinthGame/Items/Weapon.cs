@@ -8,23 +8,23 @@ namespace LabyrinthGame.Items
 {
     public class Weapon : IWeapon
     {
-        public string BaseName { get; private set; }
-        public int BaseDamage { get; private set; }
-
-        public Weapon(string name, int baseDamage)
+        public string Name { get; }
+        public string Icon { get; }
+        public int BaseDamage { get; }
+        public int HandsRequired { get; }
+        
+        public Weapon(string name, string icon = "W", int damage = 10, int handsRequired = 1)
         {
-            BaseName = name;
-            BaseDamage = baseDamage;
-        }
+            Name = name;
+            BaseDamage = damage;
+            Icon = icon;
+            HandsRequired = handsRequired;
+        }   
 
-        public virtual int Damage => BaseDamage;
+        public int Damage => BaseDamage;
 
-        public virtual string Icon => "?";
-
-        public virtual bool IsTwoHanded => false;
-
-        public virtual string GetName() => BaseName;
-
-        public virtual void ApplyEffect(Player player) { }
+        public string GetName() => Name;
+        public bool IsTwoHanded => HandsRequired == 2;  
+        public void ApplyEffect(Player player) { }
     }
 }

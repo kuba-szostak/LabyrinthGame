@@ -237,7 +237,7 @@ namespace LabyrinthGame
                 Inventory.Add(LeftHand);
                 LeftHand = null;
             }
-            if(!leftHandFlag && RightHand != null)
+            if(!leftHandFlag && RightHand != null) // unequiping from right hand
             {
                 Inventory.Add(RightHand);
                 RightHand = null; 

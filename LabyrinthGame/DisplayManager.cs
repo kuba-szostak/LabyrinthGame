@@ -1,7 +1,6 @@
 ﻿using LabyrinthGame.Items;
 using LabyrinthGame.Items.Currency;
 using LabyrinthGame.Items.Decorators;
-using LabyrinthGame.Items.Weapons;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -157,64 +156,77 @@ namespace LabyrinthGame
             }
         }
 
+
         public static void PlacePredefinedItems(Map map)
         {
-
-            // adding Sword (Sharpness) (Lucky)
-            IWeapon baseSword = new Sword();
-            IWeapon sharpSword = new DamageWeaponDecorator<IWeapon>(baseSword, "Sharpness",
+            // Adding Sword (Sharpness) (Lucky)
+            IWeapon baseSword = new Weapon("Sword", "s", 10, 1);
+            IWeapon sharpSword = new DamageWeaponDecorator<IWeapon>(
+                baseSword,
+                "Sharpness",
                 baseDamage => baseDamage + 5);
-
-            IWeapon luckySharpSword = new EffectWeaponDecorator<IWeapon>(sharpSword, "Lucky",
+            IWeapon luckySharpSword = new EffectWeaponDecorator<IWeapon>(
+                sharpSword,
+                "Lucky",
                 player => player.attributes.Luck += 5);
-
             map.ItemMap[5, 5].Add(luckySharpSword);
 
-            // adding BigAssSword (Smite) (Smart) - two handed weapon
-            IWeapon bigassSword = new TwoHandedSword();
-            IWeapon sharpBigAssSword = new DamageWeaponDecorator<IWeapon>(bigassSword, "Smite",
+            // Adding BigAssSword (Smite) (Smart) - two-handed weapon
+            IWeapon bigassSword = new Weapon("BigAssSword", "B", 20, 2);
+            IWeapon sharpBigAssSword = new DamageWeaponDecorator<IWeapon>(
+                bigassSword,
+                "Smite",
                 baseDamage => baseDamage + 4);
-            IWeapon SmartSharpBigAssSword = new EffectWeaponDecorator<IWeapon>(sharpBigAssSword, "Smart",
+            IWeapon smartSharpBigAssSword = new EffectWeaponDecorator<IWeapon>(
+                sharpBigAssSword,
+                "Smart",
                 player => player.attributes.Wisdom += 10);
-            map.ItemMap[10, 1].Add(SmartSharpBigAssSword);
-
+            map.ItemMap[10, 1].Add(smartSharpBigAssSword);
 
             // Adding Sword (Fire Aspect) (Healthy)
-            IWeapon flamethrower = new Sword();
-            IWeapon FireAspectFlamethrower = new DamageWeaponDecorator<IWeapon>(flamethrower, "Fire Aspect",
-                baseDamage => baseDamage += 2);
-            IWeapon healthyFireAspectFlameThrower = new EffectWeaponDecorator<IWeapon>(FireAspectFlamethrower, "Healthy",
+            IWeapon flamethrower = new Weapon("Sword", "s", 10, 1);
+            IWeapon fireAspectFlamethrower = new DamageWeaponDecorator<IWeapon>(
+                flamethrower,
+                "Fire Aspect",
+                baseDamage => baseDamage + 2);
+            IWeapon healthyFireAspectFlamethrower = new EffectWeaponDecorator<IWeapon>(
+                fireAspectFlamethrower,
+                "Healthy",
                 player => player.attributes.Health += 25);
-            map.ItemMap[10, 5].Add(healthyFireAspectFlameThrower);
+            map.ItemMap[10, 5].Add(healthyFireAspectFlamethrower);
 
             // Adding a coin
             IItem coin = new Coin();
             map.ItemMap[6, 7].Add(coin);
 
-            // Adding Gold
+            // Adding Gold in multiple locations
             IItem gold = new Gold();
             map.ItemMap[15, 15].Add(gold);
             map.ItemMap[18, 18].Add(gold);
             map.ItemMap[30, 17].Add(gold);
             map.ItemMap[2, 18].Add(gold);
 
-
-
-            // adding Axe (Powerful) (Heavy)
-            IWeapon axe = new Axe();
-            IWeapon powerfulAxe = new DamageWeaponDecorator<IWeapon>(axe, "Powerful",
-                baseDamage => baseDamage += 5);
-            IWeapon heavyAxe = new EffectWeaponDecorator<IWeapon>(powerfulAxe, "Heavy",
+            // Adding Axe (Powerful) (Heavy)
+            IWeapon axe = new Weapon("Axe", "a", 10, 1);
+            IWeapon powerfulAxe = new DamageWeaponDecorator<IWeapon>(
+                axe,
+                "Powerful",
+                baseDamage => baseDamage + 5);
+            IWeapon heavyAxe = new EffectWeaponDecorator<IWeapon>(
+                powerfulAxe,
+                "Heavy",
                 player => player.attributes.Dexerity -= 5);
             map.ItemMap[10, 10].Add(heavyAxe);
 
-            // Adding unusable items - Book, paper, redstone
+            // Adding unusable items - Book, Paper, Redstone
             IItem book = new GenericUnusuableItem("Book", "b");
             IItem paper = new GenericUnusuableItem("Paper", "p");
             IItem redstone = new GenericUnusuableItem("Redstone", "r");
             map.ItemMap[1, 2].Add(book);
             map.ItemMap[10, 9].Add(paper);
             map.ItemMap[37, 18].Add(redstone);
+
+
         }
 
     }

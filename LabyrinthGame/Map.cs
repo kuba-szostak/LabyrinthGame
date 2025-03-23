@@ -1,7 +1,6 @@
 ﻿using LabyrinthGame.Items;
 using LabyrinthGame.Items.Currency;
 using LabyrinthGame.Items.Decorators;
-using LabyrinthGame.Items.Weapons;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
