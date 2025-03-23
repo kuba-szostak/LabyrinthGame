@@ -1,29 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace LabyrinthGame.Items.Decorators
 {
-    // generic decorator, can be used to apply effects to objects other than weapons
-    // so we can have for example book (smart) or smth
+    // Generic decorator for applying attribute effects to any IItem
     public class EffectDecorator : ItemDecorator
     {
         private readonly string effectName;
-        private readonly Action<Player> effectAction;
+        private readonly int effectValue;
 
-        public EffectDecorator(IItem item, string effectName, Action<Player> effectAction)
+        public EffectDecorator(IItem item, string effectName, int effectValue)
             : base(item)
         {
             this.effectName = effectName;
-            this.effectAction = effectAction;
+            this.effectValue = effectValue;
         }
 
         public override void ApplyEffect(Player player)
         {
             base.ApplyEffect(player);
-            effectAction(player);
+
+            var attributeField = player.attributes.GetType().GetField(effectName);
+
+            if (attributeField == null)
+            {
+                throw new Exception($"Wrong Atribute Name");
+            }
+
+            if (attributeField.FieldType == typeof(int))
+            {
+                int currentValue = (int)attributeField.GetValue(player.attributes);
+                attributeField.SetValue(player.attributes, currentValue + effectValue);
+            }
         }
 
         public override string GetName() => $"{item.GetName()} ({effectName})";

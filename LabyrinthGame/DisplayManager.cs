@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LabyrinthGame
 {
@@ -14,30 +15,70 @@ namespace LabyrinthGame
     {
         public static void StartProgram()
         {
-            Map map = new Map(40, 20);
+            Dungeon dungeon = new DungeonBuilder(40, 20)  
+                .BuildEmptyDungeon()     
+                .AddItems(10)               
+                .AddWeapons(10)             
+                .AddModifiedWeapons(10)         
+                .Build();
+
+
             Point position = new Point(1, 1);
-            Player player = new Player(position, map);
-            DisplayManager.PlacePredefinedItems(map);
+            Player player = new Player(position, dungeon);
+           
 
             Console.CursorVisible = false;
 
             while (true)
             {
                 Console.SetCursorPosition(0, 0);
-                map.PrintMap(player);
+                DisplayManager.PrintMap(dungeon, player);
 
-                Console.SetCursorPosition(map.width + 2, 0);
+                Console.SetCursorPosition(dungeon.Width + 2, 0);
                 Console.WriteLine($"Press I for instructions");
 
-                DisplayManager.DisplayItemInfo(player, map);
-                DisplayManager.DisplayInventory(player, map.width + 2, 10);
-                DisplayManager.DisplayAttributes(player, map.width + 2, 2);
-                DisplayManager.DisplayHands(player, map.width + 20, 10);
+                DisplayManager.DisplayItemInfo(player, dungeon);
+                DisplayManager.DisplayInventory(player, dungeon.Width + 2, 10);
+                DisplayManager.DisplayAttributes(player, dungeon.Width + 2, 2);
+                DisplayManager.DisplayHands(player, dungeon.Width + 20, 10);
 
                 player.ProcessMovement();
 
             }
         }
+
+        public static void PrintMap(Dungeon dungeon, Player player)
+        {
+            if (dungeon.Tiles != null)
+            {
+                for (int y = 0; y < dungeon.Height; y++)
+                {
+                    for (int x = 0; x < dungeon.Width; x++)
+                    {
+                        if (x == player.position.X && y == player.position.Y)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.Write("¶");
+                            Console.ResetColor();
+                        }
+                        else if (dungeon.Tiles[x, y] == Tile.Wall)
+                        {
+                            Console.Write("█");
+                        }
+                        else if (dungeon.ItemMap[x, y] != null && dungeon.ItemMap[x, y].Any())
+                        {
+                            Console.Write(dungeon.ItemMap[x, y][0].Icon);
+                        }
+                        else if (dungeon.Tiles[x, y] == Tile.Floor)
+                        {
+                            Console.Write(" ");
+                        }
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+        
         public static void DisplayInventory(Player player, int cursorX, int cursorY)
         {
             Console.SetCursorPosition(cursorX, cursorY);
@@ -101,7 +142,7 @@ namespace LabyrinthGame
             Console.SetCursorPosition(cursorX, cursorY + 2);
             Console.Write(new string(' ', 30));
             Console.SetCursorPosition(cursorX, cursorY + 2);
-            Console.WriteLine($"\tDexerity: {player.attributes.Dexerity}");
+            Console.WriteLine($"\tDexerity: {player.attributes.Dexterity}");
 
             Console.SetCursorPosition(cursorX, cursorY + 3);
             Console.Write(new string(' ', 30));
@@ -140,94 +181,22 @@ namespace LabyrinthGame
             Console.Clear();
         }
 
-        public static void DisplayItemInfo(Player player, Map map)
+        public static void DisplayItemInfo(Player player, Dungeon map)
         {
             if (map.ItemMap[player.position.X, player.position.Y] != null
                && map.ItemMap[player.position.X, player.position.Y].Any())
             {
                 IItem item = map.ItemMap[player.position.X, player.position.Y][0];
-                Console.SetCursorPosition(0, map.height + 1);
+                Console.SetCursorPosition(0, map.Height + 1);
                 Console.WriteLine($"Press E to pick up {item.GetName()}");
             }
             else
             {
-                Console.SetCursorPosition(0, map.height + 1);
+                Console.SetCursorPosition(0, map.Height + 1);
                 Console.Write(new string(' ', 100));
             }
         }
 
-
-        public static void PlacePredefinedItems(Map map)
-        {
-            // Adding Sword (Sharpness) (Lucky)
-            IWeapon baseSword = new Weapon("Sword", "s", 10, 1);
-            IWeapon sharpSword = new DamageWeaponDecorator<IWeapon>(
-                baseSword,
-                "Sharpness",
-                baseDamage => baseDamage + 5);
-            IWeapon luckySharpSword = new EffectWeaponDecorator<IWeapon>(
-                sharpSword,
-                "Lucky",
-                player => player.attributes.Luck += 5);
-            map.ItemMap[5, 5].Add(luckySharpSword);
-
-            // Adding BigAssSword (Smite) (Smart) - two-handed weapon
-            IWeapon bigassSword = new Weapon("BigAssSword", "B", 20, 2);
-            IWeapon sharpBigAssSword = new DamageWeaponDecorator<IWeapon>(
-                bigassSword,
-                "Smite",
-                baseDamage => baseDamage + 4);
-            IWeapon smartSharpBigAssSword = new EffectWeaponDecorator<IWeapon>(
-                sharpBigAssSword,
-                "Smart",
-                player => player.attributes.Wisdom += 10);
-            map.ItemMap[10, 1].Add(smartSharpBigAssSword);
-
-            // Adding Sword (Fire Aspect) (Healthy)
-            IWeapon flamethrower = new Weapon("Sword", "s", 10, 1);
-            IWeapon fireAspectFlamethrower = new DamageWeaponDecorator<IWeapon>(
-                flamethrower,
-                "Fire Aspect",
-                baseDamage => baseDamage + 2);
-            IWeapon healthyFireAspectFlamethrower = new EffectWeaponDecorator<IWeapon>(
-                fireAspectFlamethrower,
-                "Healthy",
-                player => player.attributes.Health += 25);
-            map.ItemMap[10, 5].Add(healthyFireAspectFlamethrower);
-
-            // Adding a coin
-            IItem coin = new Coin();
-            map.ItemMap[6, 7].Add(coin);
-
-            // Adding Gold in multiple locations
-            IItem gold = new Gold();
-            map.ItemMap[15, 15].Add(gold);
-            map.ItemMap[18, 18].Add(gold);
-            map.ItemMap[30, 17].Add(gold);
-            map.ItemMap[2, 18].Add(gold);
-
-            // Adding Axe (Powerful) (Heavy)
-            IWeapon axe = new Weapon("Axe", "a", 10, 1);
-            IWeapon powerfulAxe = new DamageWeaponDecorator<IWeapon>(
-                axe,
-                "Powerful",
-                baseDamage => baseDamage + 5);
-            IWeapon heavyAxe = new EffectWeaponDecorator<IWeapon>(
-                powerfulAxe,
-                "Heavy",
-                player => player.attributes.Dexerity -= 5);
-            map.ItemMap[10, 10].Add(heavyAxe);
-
-            // Adding unusable items - Book, Paper, Redstone
-            IItem book = new GenericUnusuableItem("Book", "b");
-            IItem paper = new GenericUnusuableItem("Paper", "p");
-            IItem redstone = new GenericUnusuableItem("Redstone", "r");
-            map.ItemMap[1, 2].Add(book);
-            map.ItemMap[10, 9].Add(paper);
-            map.ItemMap[37, 18].Add(redstone);
-
-
-        }
 
     }
 

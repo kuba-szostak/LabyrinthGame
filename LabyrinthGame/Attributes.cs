@@ -9,7 +9,7 @@ namespace LabyrinthGame
     public class Attributes
     {
         public int Strength { get; set; }
-        public int Dexerity { get; set; }
+        public int Dexterity { get; set; }
         public int Health { get; set; }
         public int Luck { get; set; }
         public int Aggression { get; set; }
@@ -18,7 +18,7 @@ namespace LabyrinthGame
         public Attributes()
         {
             Strength = 10;
-            Dexerity = 10;
+            Dexterity = 10;
             Health = 100;
             Luck = 10;
             Aggression = 10;

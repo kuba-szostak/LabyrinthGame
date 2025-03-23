@@ -2,6 +2,7 @@
 using LabyrinthGame.Items.Currency;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -16,7 +17,7 @@ namespace LabyrinthGame
     public class Player
     {
         public Point position;
-        private Map map;
+        private Dungeon dungeon;
 
         public Attributes attributes { get; set; } = new Attributes();
 
@@ -29,16 +30,16 @@ namespace LabyrinthGame
         public IWeapon? LeftHand { get; private set; }
         public IWeapon? RightHand { get; private set; }
 
-        public Player(Point _position, Map _map)
+        public Player(Point _position, Dungeon _dungeon)
         {
             position = _position;
-            map = _map;
+            dungeon = _dungeon;
         }
 
 
         public void ProcessMovement()
         {
-            if (map == null || map.Data == null)
+            if (dungeon == null || dungeon.Tiles == null)
                 throw new Exception();
 
             if (Console.KeyAvailable)
@@ -86,7 +87,7 @@ namespace LabyrinthGame
                 while (Console.KeyAvailable)
                     _ = Console.ReadKey(true);
 
-                if (newPosition != position && map.InBounds(newPosition) && map.Data[newPosition.X, newPosition.Y] != Tile.Wall)
+                if (newPosition != position && dungeon.InBounds(newPosition) && dungeon.Tiles[newPosition.X, newPosition.Y] != Tile.Wall)
                 {
                     position = newPosition;
                 }
@@ -101,11 +102,9 @@ namespace LabyrinthGame
 
         public void PickUpItem()
         {
-            var availableItem = map.ItemMap[position.X, position.Y];
+            var availableItem = dungeon.ItemMap[position.X, position.Y];
             if (availableItem != null && availableItem.Any())
             {
-                Console.SetCursorPosition(0, map.height + 1);
-
                 IItem item = availableItem[0];
                 availableItem.RemoveAt(0);
 
@@ -129,7 +128,7 @@ namespace LabyrinthGame
         {
             IItem item = Inventory[index];
             Inventory.RemoveAt(index);
-            map.ItemMap[position.X, position.Y].Add(item);
+            dungeon.ItemMap[position.X, position.Y].Add(item);
         }
 
         private void RecalculateAttributes()

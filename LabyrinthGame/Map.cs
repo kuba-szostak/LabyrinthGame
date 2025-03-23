@@ -12,8 +12,6 @@ using System.Threading.Tasks.Dataflow;
 
 namespace LabyrinthGame
 {
-    public enum Tile { Wall, Floor }
-
     public class Map
     {
         public int width;
@@ -70,13 +68,13 @@ namespace LabyrinthGame
                             Console.Write("¶");
                             Console.ResetColor();
                         }
-                        else if (ItemMap[x,y] != null && ItemMap[x, y].Any())
-                        {
-                            Console.Write(ItemMap[x, y][0].Icon);
-                        }
                         else if (Data[x, y] == Tile.Wall)
                         {
                             Console.Write("█");
+                        }
+                        else if (ItemMap[x,y] != null && ItemMap[x, y].Any())
+                        {
+                            Console.Write(ItemMap[x, y][0].Icon);
                         }
                         else if (Data[x, y] == Tile.Floor)
                         {

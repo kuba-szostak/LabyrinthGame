@@ -11,13 +11,15 @@ namespace LabyrinthGame.Items.Decorators
     public class EffectWeaponDecorator<T> : ItemDecorator, IWeapon where T : IWeapon
     {
         private readonly string effectName;
-        private readonly Action<Player> effectAction;
+        private readonly string effectAttribute;
+        private readonly int effectValue;
 
-        public EffectWeaponDecorator(T item, string effectName, Action<Player> effectAction)
+        public EffectWeaponDecorator(T item, string effectName, string effectAttribute, int effectValue)
             : base(item)
         {
             this.effectName = effectName;
-            this.effectAction = effectAction;
+            this.effectAttribute = effectAttribute;
+            this.effectValue = effectValue;
         }
 
         public override string GetName() => $"{item.GetName()} ({effectName})";
@@ -25,8 +27,23 @@ namespace LabyrinthGame.Items.Decorators
         public override void ApplyEffect(Player player)
         {
             base.ApplyEffect(player);
-            effectAction(player);
+            var attributeProp = player.attributes.GetType()
+                .GetProperty(effectAttribute, BindingFlags.Public | BindingFlags.Instance);
+
+            if (attributeProp == null)
+                throw new Exception($"Property '{effectAttribute}' not found.");
+
+            if (attributeProp.PropertyType == typeof(int))
+            {
+                int currentValue = (int)attributeProp.GetValue(player.attributes);
+                attributeProp.SetValue(player.attributes, currentValue + effectValue);
+            }
+            else
+            {
+                throw new Exception($"Property '{effectAttribute}' is not an integer.");
+            }
         }
+
         public int Damage => ((T)item).Damage;
         public bool IsTwoHanded => ((T)item).IsTwoHanded;
         public override string Icon => item.Icon;

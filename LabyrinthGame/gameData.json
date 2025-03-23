@@ -1,0 +1,98 @@
+{
+    "Weapons": [
+        {
+            "Name": "Sword",
+            "Icon": "s",
+            "BaseDamage": 10,
+            "HandsRequired": 1
+        },
+        {
+            "Name": "Axe",
+            "Icon": "a",
+            "BaseDamage": 10,
+            "HandsRequired": 1
+        },
+        {
+            "Name": "TwoHandedSword",
+            "Icon": "B",
+            "BaseDamage": 20,
+            "HandsRequired": 2
+        }
+    ],
+    "Items": [
+        {
+            "Name": "Gold",
+            "Icon": "$"
+        },
+        {
+            "Name": "Coin",
+            "Icon": "*"
+        },
+        {
+            "Name": "Redstone",
+            "Icon": "r"
+        },
+        {
+            "Name": "Book",
+            "Icon": "b"
+        },
+        {
+            "Name": "Paper",
+            "Icon": "p"
+        },
+        {
+            "Name": "Key",
+            "Icon": "k"
+        }
+    ],
+    "WeaponDamageDecorators": [
+        {
+            "Name": "Sharp",
+            "DamageBonus": 5
+        },
+        {
+            "Name": "Smite",
+            "DamageBonus": 4
+        },
+        {
+            "Name": "Fire Aspect",
+            "DamageBonus": 3
+        },
+        {
+            "Name": "Dull",
+            "DamageBonus": -5
+        }
+    ],
+    "WeaponEffectDecorators": [
+        {
+            "Name": "Lucky",
+            "EffectAttribute": "Luck",
+            "EffectValue": 5
+        },
+        {
+            "Name": "Smart",
+            "EffectAttribute": "Wisdom",
+            "EffectValue": 4
+        },
+        {
+            "Name": "Strong",
+            "EffectAttribute": "Strength",
+            "EffectValue": 6
+        },
+        {
+            "Name": "Quick",
+            "EffectAttribute": "Dexterity",
+            "EffectValue": 3
+        },
+        {
+            "Name": "Healthy",
+            "EffectAttribute": "Health",
+            "EffectValue": 10
+        },
+        {
+            "Name": "Mad",
+            "EffectAttribute": "Aggression",
+            "EffectValue": 3
+        }
+    ]
+}

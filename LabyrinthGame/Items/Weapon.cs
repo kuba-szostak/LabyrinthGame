@@ -22,7 +22,6 @@ namespace LabyrinthGame.Items
         }   
 
         public int Damage => BaseDamage;
-
         public string GetName() => Name;
         public bool IsTwoHanded => HandsRequired == 2;  
         public void ApplyEffect(Player player) { }
