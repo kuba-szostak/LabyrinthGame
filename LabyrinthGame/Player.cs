@@ -46,11 +46,11 @@ namespace LabyrinthGame
                 Point newPosition = position;
                 var key = Console.ReadKey(true);
 
-                if(key.Key == ConsoleKey.I)
+                if (key.Key == ConsoleKey.I)
                 {
                     DisplayManager.DisplayInstructions();
                     return;
-                }    
+                }
                 if (key.Key == ConsoleKey.R)
                 {
                     EquipFromInventory(false);
@@ -97,7 +97,7 @@ namespace LabyrinthGame
             }
         }
 
-      
+
 
         public void PickUpItem()
         {
@@ -115,6 +115,10 @@ namespace LabyrinthGame
                 {
                     GoldCount++;
                 }
+                else if(item.GetName().Contains("Potion"))
+                {
+                    item.ApplyEffect(this);
+                }
                 else
                 {
                     Inventory.Add(item);
@@ -130,22 +134,6 @@ namespace LabyrinthGame
             dungeon.ItemMap[position.X, position.Y].Add(item);
         }
 
-        private void RecalculateAttributes()
-        {
-            attributes = new Attributes();
-
-            if (LeftHand != null)
-            {
-                LeftHand.ApplyEffect(this);
-            }
-            if(RightHand != null && RightHand != LeftHand)
-            {
-                RightHand.ApplyEffect(this);
-            }
-               
-        }
-
-
         public void DropItem()
         {
             if (Inventory.Count == 0)
@@ -155,7 +143,7 @@ namespace LabyrinthGame
             }
 
             DisplayManager.DisplayDropItemMenu(this);
-          
+
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';
 
@@ -176,89 +164,84 @@ namespace LabyrinthGame
             {
                 if (LeftHand != null)
                 {
-                    if (!Inventory.Contains(LeftHand))
-                    {
-                        Inventory.Add(LeftHand);
-                    }
+                    Inventory.Add(LeftHand);
+                    LeftHand.SubstractEffect(this);
                 }
                 if (RightHand != null && RightHand != LeftHand)
                 {
-                    if (!Inventory.Contains(RightHand))
-                    {
-                        Inventory.Add(RightHand);
-                    }
+                    Inventory.Add(RightHand);
+                    RightHand.SubstractEffect(this);
                 }
                 LeftHand = weapon;
                 RightHand = weapon;
+                weapon.ApplyEffect(this);
             }
             else
             {
-                if (LeftHand != null && RightHand != null && LeftHand == RightHand)
-                {
-                    Inventory.Add(LeftHand);
-                    LeftHand = null;
-                    RightHand = null;
-                }
-
                 if (leftHandFlag)
                 {
                     if (LeftHand != null)
                     {
                         Inventory.Add(LeftHand);
+                        LeftHand.SubstractEffect(this);
                     }
                     LeftHand = weapon;
+                    weapon.ApplyEffect(this);
                 }
                 else
                 {
                     if (RightHand != null)
                     {
                         Inventory.Add(RightHand);
+                        RightHand.SubstractEffect(this);
                     }
                     RightHand = weapon;
+                    weapon.ApplyEffect(this);
                 }
             }
         }
 
         public void Unequip(bool leftHandFlag)
         {
-            if(LeftHand != null && LeftHand == RightHand) // two handed weapon
+            if (LeftHand != null && LeftHand == RightHand) // two handed weapon
             {
                 Inventory.Add(LeftHand);
+                LeftHand.SubstractEffect(this);
                 LeftHand = null;
                 RightHand = null;
             }
-            if(leftHandFlag && LeftHand != null) // unequiping item from left hand
+            if (leftHandFlag && LeftHand != null) // unequiping item from left hand
             {
                 Inventory.Add(LeftHand);
+                LeftHand.SubstractEffect(this);
                 LeftHand = null;
             }
-            if(!leftHandFlag && RightHand != null) // unequiping from right hand
+            if (!leftHandFlag && RightHand != null) // unequiping from right hand
             {
                 Inventory.Add(RightHand);
-                RightHand = null; 
+                RightHand.SubstractEffect(this);
+                RightHand = null;
             }
         }
 
         private void EquipFromInventory(bool leftHandFlag)
         {
             var weapons = Inventory.OfType<IWeapon>().ToList();
-           
+
             DisplayManager.DisplayEquipItemMenu(this, weapons, leftHandFlag);
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';
-            
-            if(index == -1) // case user presses '0'
+
+            if (index == -1) // case user presses '0'
             {
                 Unequip(leftHandFlag);
-                RecalculateAttributes();
             }
             else if (index >= 0 && index < weapons.Count)
             {
                 IWeapon chosenOne = weapons[index];
                 Equip(chosenOne, leftHandFlag);
                 Inventory.RemoveAt(index);
-                RecalculateAttributes();
             }
             else
             {
@@ -267,7 +250,7 @@ namespace LabyrinthGame
             Console.Clear();
         }
 
-       
+
 
     }
 }

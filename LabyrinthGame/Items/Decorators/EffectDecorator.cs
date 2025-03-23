@@ -33,6 +33,23 @@ namespace LabyrinthGame.Items.Decorators
                 attributeField.SetValue(player.attributes, currentValue + effectValue);
             }
         }
+        public override void SubstractEffect(Player player)
+        {
+            base.SubstractEffect(player);
+
+            var attributeField = player.attributes.GetType().GetField(effectName);
+
+            if (attributeField == null)
+            {
+                throw new Exception($"Wrong Atribute Name");
+            }
+
+            if (attributeField.FieldType == typeof(int))
+            {
+                int currentValue = (int)attributeField.GetValue(player.attributes);
+                attributeField.SetValue(player.attributes, currentValue - effectValue);
+            }
+        }
 
         public override string GetName() => $"{item.GetName()} ({effectName})";
     }

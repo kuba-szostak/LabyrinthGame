@@ -27,8 +27,7 @@ namespace LabyrinthGame.Items.Decorators
         public override void ApplyEffect(Player player)
         {
             base.ApplyEffect(player);
-            var attributeProp = player.attributes.GetType()
-                .GetProperty(effectAttribute, BindingFlags.Public | BindingFlags.Instance);
+            var attributeProp = player.attributes.GetType().GetProperty(effectAttribute);
 
             if (attributeProp == null)
                 throw new Exception($"Property '{effectAttribute}' not found.");
@@ -38,9 +37,20 @@ namespace LabyrinthGame.Items.Decorators
                 int currentValue = (int)attributeProp.GetValue(player.attributes);
                 attributeProp.SetValue(player.attributes, currentValue + effectValue);
             }
-            else
+        }
+
+        public override void SubstractEffect(Player player)
+        {
+            base.SubstractEffect(player);
+            var attributeProp = player.attributes.GetType().GetProperty(effectAttribute);
+
+            if (attributeProp == null)
+                throw new Exception($"Property '{effectAttribute}' not found.");
+
+            if (attributeProp.PropertyType == typeof(int))
             {
-                throw new Exception($"Property '{effectAttribute}' is not an integer.");
+                int currentValue = (int)attributeProp.GetValue(player.attributes);
+                attributeProp.SetValue(player.attributes, currentValue - effectValue);
             }
         }
 

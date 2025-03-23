@@ -22,5 +22,10 @@ namespace LabyrinthGame.Items.Decorators
         }
 
         public abstract string GetName();
+
+        public virtual void SubstractEffect(Player player)
+        {
+            item.SubstractEffect(player);
+        }
     }
 }

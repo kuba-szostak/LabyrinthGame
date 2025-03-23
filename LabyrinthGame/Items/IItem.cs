@@ -11,5 +11,6 @@ namespace LabyrinthGame.Items
         string GetName();
         string Icon { get;  }
         void ApplyEffect(Player player);
+        void SubstractEffect(Player player);
     }
 }

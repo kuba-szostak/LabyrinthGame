@@ -94,5 +94,37 @@
             "EffectAttribute": "Aggression",
             "EffectValue": 3
         }
+    ],
+    "Potions": [
+        {
+            "Name": "Health Potion",
+            "Icon": "P",
+            "EffectAttribute": "Health",
+            "EffectValue": 10
+        },
+        {
+            "Name": "Strength Potion",
+            "Icon": "P",
+            "EffectAttribute": "Strength",
+            "EffectValue": 5
+        },
+        {
+            "Name": "Wisdom Potion",
+            "Icon": "P",
+            "EffectAttribute": "Wisdom",
+            "EffectValue": 5
+        },
+        {
+            "Name": "Dexterity Potion",
+            "Icon": "P",
+            "EffectAttribute": "Dexterity",
+            "EffectValue": 5
+        },
+        {
+            "Name": "Luck Potion",
+            "Icon": "P",
+            "EffectAttribute": "Luck",
+            "EffectValue": 5
+        }
     ]
 }

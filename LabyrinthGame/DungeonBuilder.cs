@@ -61,9 +61,9 @@ namespace LabyrinthGame
             return this;
         }
 
-        public DungeonBuilder AddPotions()
+        public DungeonBuilder AddPotions(int x = 10)
         {
-            dungeon.DistributePotions();
+            dungeon.DistributePotions(x);
             return this;
         }
 

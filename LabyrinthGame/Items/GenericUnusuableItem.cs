@@ -23,5 +23,7 @@ namespace LabyrinthGame.Items
         }
 
         public string GetName() => Name;
+
+        public void SubstractEffect(Player player) { }
     }
 }

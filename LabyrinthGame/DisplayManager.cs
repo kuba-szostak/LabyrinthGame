@@ -23,6 +23,7 @@ namespace LabyrinthGame
                 .AddItems(10)
                 .AddWeapons(10)
                 .AddModifiedWeapons(10)
+                .AddPotions(10)
                 .Build();
 
 

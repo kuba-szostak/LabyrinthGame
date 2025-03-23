@@ -299,9 +299,46 @@ namespace LabyrinthGame
             }
         }
 
-        public void DistributePotions()
+        public void DistributePotions(int numberOfPotions)
         {
+            if (!HasFloorTiles())
+            {
+                return;
+            }
+
+            string json = File.ReadAllText("../../../gameData.json");
+            GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
+            if (gameData == null)
+            {
+                throw new InvalidOperationException("Failed to load game data.");
+            }
+
+            if (gameData.Potions.Count == 0)
+            {
+                return;
+            }
+
+            Random rand = new Random();
+
+            for (int i = 0; i < numberOfPotions; i++)
+            {
+                PotionTemplate template = gameData.Potions[rand.Next(gameData.Potions.Count)];
+                Potion potion = new Potion(template.Name, template.Icon, template.EffectAttribute, template.EffectValue);
+
+                bool placed = false;
+                while (!placed)
+                {
+                    int x = rand.Next(0, Width);
+                    int y = rand.Next(0, Height);
+                    if (Tiles[x, y] == Tile.Floor)
+                    {
+                        ItemMap[x, y].Add(potion);
+                        placed = true;
+                    }
+                }
+            }
         }
+
 
         public void DistributeEnemies()
         {
@@ -356,11 +393,20 @@ namespace LabyrinthGame
         public int? EffectValue { get; set; }
     }
 
+    public class PotionTemplate
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public string EffectAttribute { get; set; } = string.Empty;
+        public int EffectValue { get; set; }
+    }
+
     public class GameData
     {
         public List<WeaponTemplate> Weapons { get; set; } = new List<WeaponTemplate>();
         public List<ItemTemplate> Items { get; set; } = new List<ItemTemplate>();
         public List<WeaponDamageDecoratorTemplate> WeaponDamageDecorators { get; set; } = new List<WeaponDamageDecoratorTemplate>();
         public List<WeaponEffectDecoratorTemplate> WeaponEffectDecorators { get; set; } = new List<WeaponEffectDecoratorTemplate>();
+        public List<PotionTemplate> Potions { get; set; } = new List<PotionTemplate>();
     }
 }
