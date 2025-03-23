@@ -1,5 +1,4 @@
 ﻿using LabyrinthGame.Items;
-using LabyrinthGame.Items.Currency;
 using LabyrinthGame.Items.Decorators;
 using System;
 using System.Collections.Generic;
@@ -15,17 +14,21 @@ namespace LabyrinthGame
     {
         public static void StartProgram()
         {
-            Dungeon dungeon = new DungeonBuilder(40, 20)  
-                .BuildEmptyDungeon()     
-                .AddItems(10)               
-                .AddWeapons(10)             
-                .AddModifiedWeapons(10)         
+            Dungeon dungeon = new DungeonBuilder(40, 20)
+                .BuildEmptyDungeon()
+                .BuildFilledDungeon()
+                .AddPaths(10)
+                .AddChambers(5)
+                .AddCentralRoom()
+                .AddItems(10)
+                .AddWeapons(10)
+                .AddModifiedWeapons(10)
                 .Build();
 
 
-            Point position = new Point(1, 1);
+            Point position = new Point(20, 10);
             Player player = new Player(position, dungeon);
-           
+
 
             Console.CursorVisible = false;
 
@@ -43,7 +46,6 @@ namespace LabyrinthGame
                 DisplayManager.DisplayHands(player, dungeon.Width + 20, 10);
 
                 player.ProcessMovement();
-
             }
         }
 
@@ -78,7 +80,7 @@ namespace LabyrinthGame
                 }
             }
         }
-        
+
         public static void DisplayInventory(Player player, int cursorX, int cursorY)
         {
             Console.SetCursorPosition(cursorX, cursorY);
@@ -197,7 +199,32 @@ namespace LabyrinthGame
             }
         }
 
+        public static void DisplayDropItemMenu(Player player)
+        {
 
+            Console.Clear();
+            Console.WriteLine("Select an item to drop:");
+            DisplayManager.DisplayInventory(player, 0, 1);
+            Console.WriteLine("Press which item you want to drop");
+        }
+
+        public static void DisplayEquipItemMenu(Player player, List<IWeapon> weapons, bool leftHandFlag)
+        {
+            if (weapons.Count == 0 && player.LeftHand == null && player.RightHand == null)
+            {
+                Console.Beep();
+                return;
+            }
+
+            Console.Clear();
+            Console.WriteLine($"Select weapon to place in {(leftHandFlag ? "left" : "right")} hand... ");
+            Console.WriteLine($"\t0. Unequip current item");
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                var wpn = weapons[i];
+                Console.WriteLine($"\t{i + 1}. {wpn.GetName()} (Damage: {wpn.Damage})");
+            }
+        }
     }
 
 }

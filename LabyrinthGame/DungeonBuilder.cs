@@ -25,15 +25,15 @@ namespace LabyrinthGame
             return this;
         }
 
-        public DungeonBuilder AddPaths()
+        public DungeonBuilder AddPaths(int x)
         {
-            dungeon.AddRandomPaths();
+            dungeon.AddRandomPaths(x);
             return this;
         }
 
-        public DungeonBuilder AddChambers()
+        public DungeonBuilder AddChambers(int x)
         {
-            dungeon.AddChambers();
+            dungeon.AddChambers(x);
             return this;
         }
 

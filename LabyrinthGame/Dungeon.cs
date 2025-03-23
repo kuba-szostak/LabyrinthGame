@@ -37,12 +37,10 @@ namespace LabyrinthGame
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    // If we are on the boundary, set the tile to Wall
                     if (x == 0 || x == Width - 1 || y == 0 || y == Height - 1)
                     {
                         Tiles[x, y] = Tile.Wall;
                     }
-                    // Otherwise, set the tile to Floor
                     else
                     {
                         Tiles[x, y] = Tile.Floor;
@@ -60,30 +58,87 @@ namespace LabyrinthGame
                 }
             }
         }
-        public void AddRandomPaths()
+
+        /// Logic behind AddRandomPaths is as follows, 
+        /// Player starts at the middle, 
+        /// We chose X points on the boundary of the map (using GetRandomBoundaryPoint)
+        /// and than create paths that connect the middle with those points.
+        public void AddRandomPaths(int boundaryPointsCount = 3)
         {
             Random rand = new Random();
-            for (int i = 0; i < 10; i++)
+
+            int centerX = Width / 2;
+            int centerY = Height / 2;
+
+            Tiles[centerX, centerY] = Tile.Floor;
+
+            for (int i = 0; i < boundaryPointsCount; i++)
             {
-                int row = rand.Next(1, Height - 1);
-                for (int x = 1; x < Width - 1; x++)
+                (int targetX, int targetY) = GetRandomBoundaryPoint(rand);
+
+                int x = centerX;
+                int y = centerY;
+
+                int maxSteps = Width * Height;  
+                for (int step = 0; step < maxSteps; step++)
                 {
-                    if (rand.NextDouble() > 0.5)
-                    {
-                        Tiles[x, row] = Tile.Floor;
-                    }
+                    Tiles[x, y] = Tile.Floor;
+
+                    if (x == targetX && y == targetY)
+                        break;
+
+                    var possibleMoves = new List<(int dx, int dy)>();
+
+                    if (x < targetX) possibleMoves.Add((1, 0));
+                    else if (x > targetX) possibleMoves.Add((-1, 0));
+
+                    if (y < targetY) possibleMoves.Add((0, 1));
+                    else if (y > targetY) possibleMoves.Add((0, -1));
+
+                    if (possibleMoves.Count == 0)
+                        break;
+
+                    var (dx, dy) = possibleMoves[rand.Next(possibleMoves.Count)];
+
+                    x += dx;
+                    y += dy;
+
+                    x = Math.Clamp(x, 1, Width - 2);
+                    y = Math.Clamp(y, 1, Height - 2);
                 }
             }
         }
-        public void AddChambers()
+        private (int x, int y) GetRandomBoundaryPoint(Random rand)
+        {
+            int side = rand.Next(4);
+            switch (side)
+            {
+                case 0: 
+                    return (rand.Next(1, Width - 1), 0);
+                case 1: 
+                    return (rand.Next(1, Width - 1), Height - 1);
+                case 2: 
+                    return (0, rand.Next(1, Height - 1));
+                case 3: 
+                    return (Width - 1, rand.Next(1, Height - 1));
+            }
+            return (0, 0);
+        }
+
+
+
+        public void AddChambers(int chamberCount = 3)
         {
             Random rand = new Random();
-            for (int i = 0; i < 3; i++)
+
+            for (int i = 0; i < chamberCount; i++)
             {
-                int chamberWidth = rand.Next(3, 7);
-                int chamberHeight = rand.Next(3, 7);
+                int chamberWidth = rand.Next(3, 6); 
+                int chamberHeight = rand.Next(3, 6);  
+
                 int startX = rand.Next(1, Width - chamberWidth - 1);
                 int startY = rand.Next(1, Height - chamberHeight - 1);
+
                 for (int x = startX; x < startX + chamberWidth; x++)
                 {
                     for (int y = startY; y < startY + chamberHeight; y++)
@@ -93,12 +148,16 @@ namespace LabyrinthGame
                 }
             }
         }
+
         public void AddCentralRoom()
         {
-            int roomWidth = Width / 2;
-            int roomHeight = Height / 2;
+            Random rand = new Random();
+            int roomWidth = rand.Next(6, 11);   
+            int roomHeight = rand.Next(6, 11); 
+
             int startX = (Width - roomWidth) / 2;
             int startY = (Height - roomHeight) / 2;
+
             for (int x = startX; x < startX + roomWidth; x++)
             {
                 for (int y = startY; y < startY + roomHeight; y++)
@@ -213,7 +272,7 @@ namespace LabyrinthGame
                 {
                     double p = rand.NextDouble();
 
-                    if(p > 0.5)
+                    if (p > 0.5)
                     {
                         WeaponDamageDecoratorTemplate modifier = gameData.WeaponDamageDecorators[rand.Next(gameData.WeaponDamageDecorators.Count)];
 

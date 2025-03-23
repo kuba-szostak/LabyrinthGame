@@ -1,5 +1,4 @@
 ﻿using LabyrinthGame.Items;
-using LabyrinthGame.Items.Currency;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -155,11 +154,8 @@ namespace LabyrinthGame
                 return;
             }
 
-            Console.Clear();
-            Console.WriteLine("Select an item to drop:");
-            DisplayManager.DisplayInventory(this, 0, 1);
-            Console.WriteLine("Press which item you want to drop");
-
+            DisplayManager.DisplayDropItemMenu(this);
+          
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';
 
@@ -246,20 +242,8 @@ namespace LabyrinthGame
         private void EquipFromInventory(bool leftHandFlag)
         {
             var weapons = Inventory.OfType<IWeapon>().ToList();
-            if (weapons.Count == 0 && LeftHand == null && RightHand == null)
-            {
-                Console.Beep();
-                return;
-            }
-
-            Console.Clear();
-            Console.WriteLine($"Select weapon to place in {(leftHandFlag ? "left" : "right")} hand... ");
-            Console.WriteLine($"\t0. Unequip current item");
-            for (int i = 0; i < weapons.Count; i++)
-            {
-                var wpn = weapons[i];
-                Console.WriteLine($"\t{i + 1}. {wpn.GetName()} (Damage: {wpn.Damage})");
-            }
+           
+            DisplayManager.DisplayEquipItemMenu(this, weapons, leftHandFlag);
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';
@@ -272,8 +256,8 @@ namespace LabyrinthGame
             else if (index >= 0 && index < weapons.Count)
             {
                 IWeapon chosenOne = weapons[index];
-                Inventory.RemoveAt(index);
                 Equip(chosenOne, leftHandFlag);
+                Inventory.RemoveAt(index);
                 RecalculateAttributes();
             }
             else
