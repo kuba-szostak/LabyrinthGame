@@ -14,6 +14,6 @@ class Program
 {
     public static void Main(String[] Args)
     {
-        DisplayManager.StartProgram();
+        DisplayManager.Instance.StartProgram();
     }
 }

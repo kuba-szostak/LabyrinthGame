@@ -48,7 +48,7 @@ namespace LabyrinthGame
 
                 if (key.Key == ConsoleKey.I)
                 {
-                    DisplayManager.DisplayInstructions();
+                    DisplayManager.Instance.DisplayInstructions();
                     return;
                 }
                 if (key.Key == ConsoleKey.R)
@@ -142,7 +142,7 @@ namespace LabyrinthGame
                 return;
             }
 
-            DisplayManager.DisplayDropItemMenu(this);
+            DisplayManager.Instance.DisplayDropItemMenu(this);
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';
@@ -228,7 +228,7 @@ namespace LabyrinthGame
         {
             var weapons = Inventory.OfType<IWeapon>().ToList();
 
-            DisplayManager.DisplayEquipItemMenu(this, weapons, leftHandFlag);
+            DisplayManager.Instance.DisplayEquipItemMenu(this, weapons, leftHandFlag);
 
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             int index = keyInfo.KeyChar - '1';

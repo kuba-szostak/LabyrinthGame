@@ -126,5 +126,19 @@
             "EffectAttribute": "Luck",
             "EffectValue": 5
         }
+    ],
+    "Enemies": [
+        {
+            "Name": "Creeper",
+            "Icon": "C"
+        },
+        {
+            "Name": "Skeleton",
+            "Icon": "S"
+        },
+        {
+            "Name": "Zomie",
+            "Icon": "Z"
+        }
     ]
 }

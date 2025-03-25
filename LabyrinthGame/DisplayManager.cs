@@ -12,18 +12,31 @@ namespace LabyrinthGame
 {
     public class DisplayManager
     {
-        public static void StartProgram()
+
+        private static readonly DisplayManager instance = new DisplayManager();
+        private DisplayManager()
+        {
+
+        }
+
+        public static DisplayManager Instance
+        {
+            get { return instance; }
+        }
+
+        public void StartProgram()
         {
             Dungeon dungeon = new DungeonBuilder(40, 20)
                 .BuildEmptyDungeon()
                 .BuildFilledDungeon()
-                .AddPaths(10)
+                .AddPaths(20)
                 .AddChambers(5)
                 .AddCentralRoom()
                 .AddItems(10)
                 .AddWeapons(10)
                 .AddModifiedWeapons(10)
                 .AddPotions(10)
+                .AddEnemies(3)
                 .Build();
 
 
@@ -36,21 +49,22 @@ namespace LabyrinthGame
             while (true)
             {
                 Console.SetCursorPosition(0, 0);
-                DisplayManager.PrintMap(dungeon, player);
+                PrintMap(dungeon, player);
 
                 Console.SetCursorPosition(dungeon.Width + 2, 0);
                 Console.WriteLine($"Press I for instructions");
 
-                DisplayManager.DisplayItemInfo(player, dungeon);
-                DisplayManager.DisplayInventory(player, dungeon.Width + 2, 10);
-                DisplayManager.DisplayAttributes(player, dungeon.Width + 2, 2);
-                DisplayManager.DisplayHands(player, dungeon.Width + 20, 10);
+                DisplayItemInfo(player, dungeon);
+                DisplayInventory(player, dungeon.Width + 2, 10);
+                DisplayAttributes(player, dungeon.Width + 2, 2);
+                DisplayHands(player, dungeon.Width + 20, 10);
+                DisplayEnemyInfo(player, dungeon);
 
                 player.ProcessMovement();
             }
         }
 
-        public static void PrintMap(Dungeon dungeon, Player player)
+        public void PrintMap(Dungeon dungeon, Player player)
         {
             if (dungeon.Tiles != null)
             {
@@ -68,7 +82,13 @@ namespace LabyrinthGame
                         {
                             Console.Write("█");
                         }
-                        else if (dungeon.ItemMap[x, y] != null && dungeon.ItemMap[x, y].Any())
+                        else if (dungeon.EnemyMap[x, y] != null && dungeon.EnemyMap[x, y].Any())
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write(dungeon.EnemyMap[x, y][0].Icon);
+                            Console.ResetColor();
+                        }
+                        else if (dungeon.ItemMap[x, y].Count > 0)
                         {
                             Console.Write(dungeon.ItemMap[x, y][0].Icon);
                         }
@@ -82,7 +102,7 @@ namespace LabyrinthGame
             }
         }
 
-        public static void DisplayInventory(Player player, int cursorX, int cursorY)
+        public void DisplayInventory(Player player, int cursorX, int cursorY)
         {
             Console.SetCursorPosition(cursorX, cursorY);
             Console.WriteLine("Inventory:");
@@ -106,7 +126,7 @@ namespace LabyrinthGame
 
         }
 
-        public static void DisplayHands(Player player, int startX, int startY)
+        public void DisplayHands(Player player, int startX, int startY)
         {
             Console.SetCursorPosition(startX, startY);
             Console.WriteLine("Equipped Weapons");
@@ -132,7 +152,7 @@ namespace LabyrinthGame
             }
         }
 
-        public static void DisplayAttributes(Player player, int cursorX, int cursorY)
+        public void DisplayAttributes(Player player, int cursorX, int cursorY)
         {
             Console.SetCursorPosition(cursorX, cursorY);
             Console.WriteLine("Players Attributes:");
@@ -168,7 +188,7 @@ namespace LabyrinthGame
             Console.WriteLine($"\tWisdom: {player.attributes.Wisdom}");
         }
 
-        public static void DisplayInstructions()
+        public void DisplayInstructions()
         {
             Console.Clear();
             Console.WriteLine("Instructions\n");
@@ -184,7 +204,7 @@ namespace LabyrinthGame
             Console.Clear();
         }
 
-        public static void DisplayItemInfo(Player player, Dungeon map)
+        public void DisplayItemInfo(Player player, Dungeon map)
         {
             if (map.ItemMap[player.position.X, player.position.Y] != null
                && map.ItemMap[player.position.X, player.position.Y].Any())
@@ -196,20 +216,20 @@ namespace LabyrinthGame
             else
             {
                 Console.SetCursorPosition(0, map.Height + 1);
-                Console.Write(new string(' ', 100));
+                Console.Write(new string(' ', 70));
             }
         }
 
-        public static void DisplayDropItemMenu(Player player)
+        public void DisplayDropItemMenu(Player player)
         {
 
             Console.Clear();
             Console.WriteLine("Select an item to drop:");
-            DisplayManager.DisplayInventory(player, 0, 1);
+            DisplayInventory(player, 0, 1);
             Console.WriteLine("Press which item you want to drop");
         }
 
-        public static void DisplayEquipItemMenu(Player player, List<IWeapon> weapons, bool leftHandFlag)
+        public void DisplayEquipItemMenu(Player player, List<IWeapon> weapons, bool leftHandFlag)
         {
             if (weapons.Count == 0 && player.LeftHand == null && player.RightHand == null)
             {
@@ -226,6 +246,39 @@ namespace LabyrinthGame
                 Console.WriteLine($"\t{i + 1}. {wpn.GetName()} (Damage: {wpn.Damage})");
             }
         }
+
+        public void DisplayEnemyInfo(Player player, Dungeon map)
+        {
+            Console.SetCursorPosition(0, map.Height + 2);
+
+            bool foundEnemy = false;
+
+            for (int dx = -1; dx <= 1 && !foundEnemy; dx++)
+            {
+                for (int dy = -1; dy <= 1 && !foundEnemy; dy++)
+                {
+
+                    int nx = player.position.X + dx;
+                    int ny = player.position.Y + dy;
+
+                    if (map.InBounds(new Point(nx, ny)))
+                    {
+                        if (map.EnemyMap[nx, ny].Any())
+                        {
+                            var enemy = map.EnemyMap[nx, ny][0];
+                            Console.WriteLine($"There is a {enemy.GetName()} ({enemy.Icon}) nearby!");
+                            foundEnemy = true;
+                        }
+                    }
+                }
+            }
+            if (!foundEnemy)
+            {
+                Console.Write(new string(' ', 100));
+            }
+        }
+
+
     }
 
 }

@@ -67,9 +67,9 @@ namespace LabyrinthGame
             return this;
         }
 
-        public DungeonBuilder AddEnemies()
+        public DungeonBuilder AddEnemies(int x)
         {
-            dungeon.DistributeEnemies();
+            dungeon.DistributeEnemies(x);
             return this;
         }
         public Dungeon Build()

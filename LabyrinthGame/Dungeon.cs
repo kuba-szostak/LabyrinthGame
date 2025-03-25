@@ -16,6 +16,8 @@ namespace LabyrinthGame
         public int Height { get; private set; }
         public Tile[,] Tiles { get; private set; }
         public List<IItem>[,] ItemMap { get; private set; }
+        public List<Enemy>[,] EnemyMap { get; private set; }
+
 
         public Dungeon(int width = 40, int height = 20)
         {
@@ -23,11 +25,13 @@ namespace LabyrinthGame
             Height = height;
             Tiles = new Tile[width, height];
             ItemMap = new List<IItem>[width, height];
+            EnemyMap = new List<Enemy>[width, height];
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
                     ItemMap[x, y] = new List<IItem>();
+                    EnemyMap[x, y] = new List<Enemy>();
                 }
             }
         }
@@ -79,7 +83,7 @@ namespace LabyrinthGame
                 int x = centerX;
                 int y = centerY;
 
-                int maxSteps = Width * Height;  
+                int maxSteps = Width * Height;
                 for (int step = 0; step < maxSteps; step++)
                 {
                     Tiles[x, y] = Tile.Floor;
@@ -113,13 +117,13 @@ namespace LabyrinthGame
             int side = rand.Next(4);
             switch (side)
             {
-                case 0: 
+                case 0:
                     return (rand.Next(1, Width - 1), 0);
-                case 1: 
+                case 1:
                     return (rand.Next(1, Width - 1), Height - 1);
-                case 2: 
+                case 2:
                     return (0, rand.Next(1, Height - 1));
-                case 3: 
+                case 3:
                     return (Width - 1, rand.Next(1, Height - 1));
             }
             return (0, 0);
@@ -133,8 +137,8 @@ namespace LabyrinthGame
 
             for (int i = 0; i < chamberCount; i++)
             {
-                int chamberWidth = rand.Next(3, 6); 
-                int chamberHeight = rand.Next(3, 6);  
+                int chamberWidth = rand.Next(3, 6);
+                int chamberHeight = rand.Next(3, 6);
 
                 int startX = rand.Next(1, Width - chamberWidth - 1);
                 int startY = rand.Next(1, Height - chamberHeight - 1);
@@ -152,8 +156,8 @@ namespace LabyrinthGame
         public void AddCentralRoom()
         {
             Random rand = new Random();
-            int roomWidth = rand.Next(6, 11);   
-            int roomHeight = rand.Next(6, 11); 
+            int roomWidth = rand.Next(6, 11);
+            int roomHeight = rand.Next(6, 11);
 
             int startX = (Width - roomWidth) / 2;
             int startY = (Height - roomHeight) / 2;
@@ -325,24 +329,54 @@ namespace LabyrinthGame
                 PotionTemplate template = gameData.Potions[rand.Next(gameData.Potions.Count)];
                 Potion potion = new Potion(template.Name, template.Icon, template.EffectAttribute, template.EffectValue);
 
-                bool placed = false;
-                while (!placed)
+                while (true)
                 {
                     int x = rand.Next(0, Width);
                     int y = rand.Next(0, Height);
                     if (Tiles[x, y] == Tile.Floor)
                     {
                         ItemMap[x, y].Add(potion);
-                        placed = true;
+                        break;
                     }
                 }
             }
         }
 
 
-        public void DistributeEnemies()
+        public void DistributeEnemies(int numberOfEnemies)
         {
+            if (!HasFloorTiles())
+                return;
+
+            string json = File.ReadAllText("../../../gameData.json");
+            GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
+            if (gameData == null)
+                throw new InvalidOperationException("Failed to load game data.");
+
+            if (gameData.Enemies.Count == 0)
+                return;
+
+            Random rand = new Random();
+
+            for (int i = 0; i < numberOfEnemies; i++)
+            {
+                EnemyTemplate template = gameData.Enemies[rand.Next(gameData.Enemies.Count)];
+                Enemy enemy = new Enemy(template.Name, template.Icon);
+
+
+                while (true)
+                {
+                    int x = rand.Next(0, Width);
+                    int y = rand.Next(0, Height);
+                    if (Tiles[x, y] == Tile.Floor)
+                    {
+                        EnemyMap[x, y].Add(enemy);
+                        break;
+                    }
+                }
+            }
         }
+
 
         private bool HasFloorTiles()
         {
@@ -401,6 +435,12 @@ namespace LabyrinthGame
         public int EffectValue { get; set; }
     }
 
+    public class EnemyTemplate
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+    }
+
     public class GameData
     {
         public List<WeaponTemplate> Weapons { get; set; } = new List<WeaponTemplate>();
@@ -408,5 +448,6 @@ namespace LabyrinthGame
         public List<WeaponDamageDecoratorTemplate> WeaponDamageDecorators { get; set; } = new List<WeaponDamageDecoratorTemplate>();
         public List<WeaponEffectDecoratorTemplate> WeaponEffectDecorators { get; set; } = new List<WeaponEffectDecoratorTemplate>();
         public List<PotionTemplate> Potions { get; set; } = new List<PotionTemplate>();
+        public List<EnemyTemplate> Enemies { get; set; } = new List<EnemyTemplate>();
     }
 }
