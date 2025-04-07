@@ -86,11 +86,18 @@ namespace LabyrinthGame
 
     public class I_Handler : InputHandler
     {
+        private readonly GameInstructions instructions;
+
+        public I_Handler(GameInstructions instructions)
+        {
+            this.instructions = instructions;
+        }
+
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.I)
             {
-                DisplayManager.Instance.DisplayInstructions();
+                DisplayManager.Instance.DisplayInstructions(instructions);
             }
             else
             {
@@ -144,24 +151,63 @@ namespace LabyrinthGame
         }
     }
 
+    public class DefaultHandler : InputHandler
+    {
+        private readonly Dungeon dungeon;
+        public DefaultHandler(Dungeon dungeon)
+        {
+            this.dungeon = dungeon;
+        }
+        public override void HandleInput(ConsoleKey key, Player player)
+        {
+            DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
+        }
+    }
+
     public class InputHandlerFactory
     {
-        public static InputHandler CreateInputHandlerChain()
+        public static InputHandler CreateInputHandlerChain(GameInstructions instructions, Dungeon dungeon)
         {
-            InputHandler wsadHandler = new WSAD_Handler();
-            InputHandler eHandler = new E_Handler();
-            InputHandler qHandler = new Q_Handler();
-            InputHandler iHandler = new I_Handler();
-            InputHandler rHandler = new R_Handler();
-            InputHandler lHandler = new L_Handler();
+            List<InputHandler> inputHandlers = new List<InputHandler>();
+
+            InputHandler iHandler = new I_Handler(instructions);
+            inputHandlers.Add(iHandler);
+
+            if (instructions.ContainsInstruction("movement"))
+            {
+                InputHandler wsadHandler = new WSAD_Handler();
+                inputHandlers.Add(wsadHandler);
+            }
+            if (instructions.ContainsInstruction("pickup"))
+            {
+                InputHandler eHandler = new E_Handler();
+                inputHandlers.Add(eHandler);
+
+                InputHandler qHandler = new Q_Handler();
+                inputHandlers.Add(qHandler);
+            }
+            if (instructions.ContainsInstruction("equip"))
+            {
+                InputHandler lHandler = new L_Handler();
+                inputHandlers.Add(lHandler);
+
+                InputHandler rHandler = new R_Handler();
+                inputHandlers.Add(rHandler);
+            }
+
+
             InputHandler escHandler = new ESC_Handler();
-            wsadHandler.SetNext(eHandler);
-            eHandler.SetNext(qHandler);
-            qHandler.SetNext(iHandler);
-            iHandler.SetNext(rHandler);
-            rHandler.SetNext(lHandler);
-            lHandler.SetNext(escHandler);
-            return wsadHandler;
+            inputHandlers.Add(escHandler);
+
+            InputHandler defaultHandler = new DefaultHandler(dungeon);
+            inputHandlers.Add(defaultHandler);
+
+            for(int i = 0; i < inputHandlers.Count() -1; i++)
+            {
+                inputHandlers[i].SetNext(inputHandlers[i + 1]);
+            }
+
+            return iHandler;
         }
     }
 }

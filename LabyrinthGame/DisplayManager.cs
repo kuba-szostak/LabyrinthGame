@@ -26,23 +26,24 @@ namespace LabyrinthGame
 
         public void StartProgram()
         {
-            Dungeon dungeon = new DungeonBuilder(40, 20)
+            var builder = new DungeonBuilder(40, 20)
                 .BuildEmptyDungeon()
                 .BuildFilledDungeon()
                 .AddPaths(20)
                 .AddChambers(5)
                 .AddCentralRoom()
-                .AddItems(10)
-                .AddWeapons(10)
-                .AddModifiedWeapons(10)
-                .AddPotions(10)
-                .AddEnemies(3)
-                .Build();
+                //.AddItems(10)
+                //.AddWeapons(10)
+                //.AddModifiedWeapons(10)
+                //.AddPotions(10)
+                .AddEnemies(3);
 
+            Dungeon dungeon = builder.Build();
+            GameInstructions instructions = builder.GetInstructions();
 
             Point position = new Point(20, 10);
             Player player = new Player(position, dungeon);
-            InputHandler chain = InputHandlerFactory.CreateInputHandlerChain();
+            InputHandler chain = InputHandlerFactory.CreateInputHandlerChain(instructions, dungeon);
 
             Console.CursorVisible = false;
 
@@ -60,10 +61,10 @@ namespace LabyrinthGame
                 DisplayHands(player, dungeon.Width + 20, 10);
                 DisplayEnemyInfo(player, dungeon);
 
-                if(Console.KeyAvailable)
+                if (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey(true);
-                   
+
                     chain.HandleInput(key.Key, player);
 
                     while (Console.KeyAvailable)
@@ -108,6 +109,15 @@ namespace LabyrinthGame
                     Console.WriteLine();
                 }
             }
+        }
+
+        public void DisplayInvalidInput(int cursorX, int cursorY)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.SetCursorPosition(cursorX, cursorY);
+            Console.WriteLine("Invalid Input");
+            Console.ResetColor();
+
         }
 
         public void DisplayInventory(Player player, int cursorX, int cursorY)
@@ -196,18 +206,12 @@ namespace LabyrinthGame
             Console.WriteLine($"\tWisdom: {player.attributes.Wisdom}");
         }
 
-        public void DisplayInstructions()
+        public void DisplayInstructions(GameInstructions instructions)
         {
             Console.Clear();
             Console.WriteLine("Instructions\n");
-            Console.WriteLine("W / A / S / D : Move your character");
-            Console.WriteLine("E             : Pick up an item");
-            Console.WriteLine("Q             : Drop an item");
-            Console.WriteLine("L             : Equip weapon in left hand");
-            Console.WriteLine("R             : Equip weapon in right hand");
-            Console.WriteLine("I             : Show these instructions");
-            Console.WriteLine("ESC           : Exit the game\n");
-            Console.WriteLine("Press any key to resume the game...");
+            Console.WriteLine(instructions.ToString());
+            Console.WriteLine("\nPress any key to resume the game...");
             Console.ReadKey(true);
             Console.Clear();
         }

@@ -104,7 +104,6 @@ namespace LabyrinthGame
             {
                 Console.Beep();
             }
-            Console.Clear();
         }
 
         public void Equip(IWeapon weapon, bool leftHandFlag)
