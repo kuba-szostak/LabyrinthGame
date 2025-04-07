@@ -1,5 +1,7 @@
-﻿using LabyrinthGame.Items;
+﻿using LabyrinthGame.Interfaces;
+using LabyrinthGame.Items;
 using LabyrinthGame.Items.Decorators;
+using LabyrinthGame.Items.Potions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -29,20 +31,21 @@ namespace LabyrinthGame
             var builder = new DungeonBuilder(40, 20)
                 .BuildEmptyDungeon()
                 .BuildFilledDungeon()
-                .AddPaths(20)
-                .AddChambers(5)
+                //.AddPaths(20)
+                //.AddChambers(5)
                 .AddCentralRoom()
                 //.AddItems(10)
                 //.AddWeapons(10)
-                //.AddModifiedWeapons(10)
-                //.AddPotions(10)
-                .AddEnemies(3);
+                .AddModifiedWeapons(10)
+                .AddPotions(30);
+            //.AddEnemies(3);
 
             Dungeon dungeon = builder.Build();
             GameInstructions instructions = builder.GetInstructions();
 
             Point position = new Point(20, 10);
             Player player = new Player(position, dungeon);
+
             InputHandler chain = InputHandlerFactory.CreateInputHandlerChain(instructions, dungeon);
 
             Console.CursorVisible = false;
@@ -57,6 +60,7 @@ namespace LabyrinthGame
 
                 DisplayItemInfo(player, dungeon);
                 DisplayInventory(player, dungeon.Width + 2, 10);
+                DisplayActiveEffects(player, dungeon.Width + 40, 2);
                 DisplayAttributes(player, dungeon.Width + 2, 2);
                 DisplayHands(player, dungeon.Width + 20, 10);
                 DisplayEnemyInfo(player, dungeon);
@@ -70,6 +74,8 @@ namespace LabyrinthGame
                     while (Console.KeyAvailable)
                         _ = Console.ReadKey(true);
                 }
+
+                // player.UpdateEffects();
             }
         }
 
@@ -117,7 +123,26 @@ namespace LabyrinthGame
             Console.SetCursorPosition(cursorX, cursorY);
             Console.WriteLine("Invalid Input");
             Console.ResetColor();
+        }
 
+        public void DisplayActiveEffects(Player player, int cursorX, int cursorY)
+        {
+            int line = cursorY;
+            Console.SetCursorPosition(cursorX, line);
+            Console.WriteLine("Active Effects: ");
+
+            for(int i = 0; i < 15; i++)
+            {
+                Console.SetCursorPosition(cursorX, ++line);
+                Console.Write(new string(' ', 40));
+            }
+            line = cursorY;
+
+            foreach (var effect in player.ActiveEffects)
+            {
+                Console.SetCursorPosition(cursorX, ++line);
+                Console.WriteLine($"\t ({effect.GetName()}");
+            }
         }
 
         public void DisplayInventory(Player player, int cursorX, int cursorY)
@@ -223,6 +248,8 @@ namespace LabyrinthGame
             {
                 IItem item = map.ItemMap[player.position.X, player.position.Y][0];
                 Console.SetCursorPosition(0, map.Height + 1);
+                Console.Write(new string(' ', 70));
+                Console.SetCursorPosition(0, map.Height + 1);
                 Console.WriteLine($"Press E to pick up {item.GetName()}");
             }
             else
@@ -290,7 +317,16 @@ namespace LabyrinthGame
             }
         }
 
-
+        public void DisplayPotionMenu(Player player, List<Potion> potions)
+        {
+            Console.Clear();
+            Console.WriteLine("Select a potion to drink:");
+            for (int i = 0; i < potions.Count; i++)
+            {
+                var pot = potions[i];
+                Console.WriteLine($"\t{i + 1}. {pot.GetName()}");
+            }
+        }
     }
 
 }

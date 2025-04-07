@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.Items
+namespace LabyrinthGame.Interfaces
 {
     public interface IItem
     {

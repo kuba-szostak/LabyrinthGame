@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LabyrinthGame.Interfaces;
+using System;
 using System.Reflection;
 
 namespace LabyrinthGame.Items.Decorators

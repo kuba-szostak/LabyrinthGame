@@ -1,5 +1,7 @@
-﻿using LabyrinthGame.Items;
+﻿using LabyrinthGame.Interfaces;
+using LabyrinthGame.Items;
 using LabyrinthGame.Items.Decorators;
+using LabyrinthGame.Items.Potions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -327,7 +329,8 @@ namespace LabyrinthGame
             for (int i = 0; i < numberOfPotions; i++)
             {
                 PotionTemplate template = gameData.Potions[rand.Next(gameData.Potions.Count)];
-                Potion potion = new Potion(template.Name, template.Icon, template.EffectAttribute, template.EffectValue);
+                Potion potion = new Potion(template.Name, template.Icon, template.EffectAttribute, 
+                    template.EffectValue, template.EffectTime, template.IsEffectStable);
 
                 while (true)
                 {
@@ -433,6 +436,8 @@ namespace LabyrinthGame
         public string Icon { get; set; } = string.Empty;
         public string EffectAttribute { get; set; } = string.Empty;
         public int EffectValue { get; set; }
+        public int EffectTime { get; set; }
+        public bool IsEffectStable { get; set; }
     }
 
     public class EnemyTemplate

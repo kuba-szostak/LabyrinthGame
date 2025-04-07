@@ -47,6 +47,7 @@ namespace LabyrinthGame
                         break;
                 }
                 player.Move(newPosition);
+                player.UpdateEffects();
             }
             else
             {
@@ -136,6 +137,21 @@ namespace LabyrinthGame
         }
     }
 
+    public class P_Handler : InputHandler
+    {
+        public override void HandleInput(ConsoleKey key, Player player)
+        {
+            if (key == ConsoleKey.P)
+            {
+                player.DrinkPotion();
+            }
+            else
+            {
+                base.HandleInput(key, player);
+            }
+        }
+    }
+
     public class ESC_Handler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
@@ -170,9 +186,6 @@ namespace LabyrinthGame
         {
             List<InputHandler> inputHandlers = new List<InputHandler>();
 
-            InputHandler iHandler = new I_Handler(instructions);
-            inputHandlers.Add(iHandler);
-
             if (instructions.ContainsInstruction("movement"))
             {
                 InputHandler wsadHandler = new WSAD_Handler();
@@ -194,7 +207,15 @@ namespace LabyrinthGame
                 InputHandler rHandler = new R_Handler();
                 inputHandlers.Add(rHandler);
             }
+            if(instructions.ContainsInstruction("potion"))
+            {
+                InputHandler pHandler = new P_Handler();
+                inputHandlers.Add(pHandler);
+            }
 
+
+            InputHandler iHandler = new I_Handler(instructions);
+            inputHandlers.Add(iHandler);
 
             InputHandler escHandler = new ESC_Handler();
             inputHandlers.Add(escHandler);
@@ -207,7 +228,7 @@ namespace LabyrinthGame
                 inputHandlers[i].SetNext(inputHandlers[i + 1]);
             }
 
-            return iHandler;
+            return inputHandlers.First();
         }
     }
 }

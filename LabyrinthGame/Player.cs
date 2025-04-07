@@ -1,4 +1,5 @@
-﻿using LabyrinthGame.Items;
+﻿using LabyrinthGame.Interfaces;
+using LabyrinthGame.Items.Potions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LabyrinthGame
 {
-    public class Player
+    public class Player : ISubject
     {
         public Point position;
         private Dungeon dungeon;
@@ -29,12 +30,42 @@ namespace LabyrinthGame
         public IWeapon? LeftHand { get; private set; }
         public IWeapon? RightHand { get; private set; }
 
+        private readonly List<IObserver> _observers = new List<IObserver>();
+        public IEnumerable<IObserver> ActiveEffects => _observers;
+
+
+
+
+
         public Player(Point _position, Dungeon _dungeon)
         {
             position = _position;
             dungeon = _dungeon;
         }
 
+        public void Attach(IObserver observer)
+        {
+            _observers.Add(observer);
+        }
+
+        public void Detach(IObserver observer)
+        {
+            _observers.Remove(observer);
+        }
+
+        public void Notify()
+        {
+            foreach (var observer in new List<IObserver>(_observers))
+            {
+                observer.Update(this);
+            }
+        }
+
+        public void UpdateEffects()
+        {
+            Notify();
+        }
+    
         public void Move(Point newPositon)
         {
             if (newPositon != position && dungeon.InBounds(newPositon) && dungeon.Tiles[newPositon.X, newPositon.Y] != Tile.Wall)
@@ -64,10 +95,10 @@ namespace LabyrinthGame
                 {
                     GoldCount++;
                 }
-                else if (item.GetName().Contains("Potion"))
-                {
-                    item.ApplyEffect(this);
-                }
+                //else if (item.GetName().Contains("Potion"))
+                //{
+                //    item.ApplyEffect(this);
+                //}
                 else
                 {
                     Inventory.Add(item);
@@ -198,5 +229,30 @@ namespace LabyrinthGame
             Console.Clear();
         }
 
+        public void DrinkPotion()
+        {
+            var potions = Inventory.OfType<Potion>().ToList();
+            if (potions.Count == 0)
+            {
+                DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
+                return;
+            }
+
+            DisplayManager.Instance.DisplayPotionMenu(this, potions);
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            int index = keyInfo.KeyChar - '1';
+
+            if (index >= 0 && index < potions.Count)
+            {
+                Potion selectedPotion = potions[index];
+                selectedPotion.ApplyEffect(this);
+                Inventory.Remove(selectedPotion);
+            }
+            else
+            {
+                DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
+            }
+        }
     }
 }

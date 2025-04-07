@@ -100,31 +100,41 @@
             "Name": "Health Potion",
             "Icon": "P",
             "EffectAttribute": "Health",
-            "EffectValue": 10
+            "EffectValue": 10,
+            "EffectTime": 10,
+            "IsEffectStable": true
         },
         {
             "Name": "Strength Potion",
             "Icon": "P",
             "EffectAttribute": "Strength",
-            "EffectValue": 5
+            "EffectValue": 5,
+            "EffectTime": 10,
+            "IsEffectStable": true
         },
         {
             "Name": "Wisdom Potion",
             "Icon": "P",
             "EffectAttribute": "Wisdom",
-            "EffectValue": 5
+            "EffectValue": 5,
+            "EffectTime": 10,
+            "IsEffectStable": false
         },
         {
             "Name": "Dexterity Potion",
             "Icon": "P",
             "EffectAttribute": "Dexterity",
-            "EffectValue": 5
+            "EffectValue": 5,
+            "EffectTime": 0,
+            "IsEffectStable": false
         },
         {
             "Name": "Luck Potion",
             "Icon": "P",
             "EffectAttribute": "Luck",
-            "EffectValue": 5
+            "EffectValue": 5,
+            "EffectTime": 0,
+            "IsEffectStable": false
         }
     ],
     "Enemies": [
