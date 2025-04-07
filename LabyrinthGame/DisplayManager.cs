@@ -117,6 +117,12 @@ namespace LabyrinthGame
             }
         }
 
+
+        public void DisplayConsoleClear()
+        {
+            Console.Clear();
+        }
+
         public void DisplayInvalidInput(int cursorX, int cursorY)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -131,7 +137,7 @@ namespace LabyrinthGame
             Console.SetCursorPosition(cursorX, line);
             Console.WriteLine("Active Effects: ");
 
-            for(int i = 0; i < 15; i++)
+            for(int i = 0; i < 10; i++)
             {
                 Console.SetCursorPosition(cursorX, ++line);
                 Console.Write(new string(' ', 40));
@@ -162,6 +168,8 @@ namespace LabyrinthGame
                 for (int i = 0; i < player.Inventory.Count; i++)
                 {
                     var item = player.Inventory[i];
+                    Console.SetCursorPosition(cursorX, line + i);
+                    Console.Write(new string(' ', 50));
                     Console.SetCursorPosition(cursorX, line + i);
                     Console.WriteLine($"{i + 1}. {item.GetName()} - {item.Icon}");
                 }

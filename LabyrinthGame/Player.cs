@@ -65,7 +65,7 @@ namespace LabyrinthGame
         {
             Notify();
         }
-    
+
         public void Move(Point newPositon)
         {
             if (newPositon != position && dungeon.InBounds(newPositon) && dungeon.Tiles[newPositon.X, newPositon.Y] != Tile.Wall)
@@ -253,6 +253,15 @@ namespace LabyrinthGame
             {
                 DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
             }
+        }
+
+        public void DropAllItems()
+        {
+            foreach (IItem item in Inventory)
+            {
+                dungeon.ItemMap[position.X, position.Y].Add(item);
+            }
+            Inventory.Clear();
         }
     }
 }

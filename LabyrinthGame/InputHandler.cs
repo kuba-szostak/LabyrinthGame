@@ -85,6 +85,22 @@ namespace LabyrinthGame
         }
     }
 
+    public class X_Handler : InputHandler
+    {
+        public override void HandleInput(ConsoleKey key, Player player)
+        {
+            if (key == ConsoleKey.X)
+            {
+                player.DropAllItems();
+                DisplayManager.Instance.DisplayConsoleClear();
+            }
+            else
+            {
+                base.HandleInput(key, player);
+            }
+        }
+    }
+
     public class I_Handler : InputHandler
     {
         private readonly GameInstructions instructions;
@@ -196,8 +212,12 @@ namespace LabyrinthGame
                 InputHandler eHandler = new E_Handler();
                 inputHandlers.Add(eHandler);
 
+                InputHandler xHandler = new X_Handler();
+                inputHandlers.Add(xHandler);
+
                 InputHandler qHandler = new Q_Handler();
                 inputHandlers.Add(qHandler);
+
             }
             if (instructions.ContainsInstruction("equip"))
             {

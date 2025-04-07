@@ -50,16 +50,19 @@ namespace LabyrinthGame
         public DungeonBuilder AddItems(int x = 10)
         {
             dungeon.DistributeItems(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item");
-            gameInstructions.AddInstruction("drop", "Press Q: Drop an item");
+            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
+                            "Press X: Drop all items\n" +
+                            "Press Q: Drop an item");
             return this;
         }
 
         public DungeonBuilder AddWeapons(int x = 10)
         {
             dungeon.DistributeWeapons(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item");
-            gameInstructions.AddInstruction("drop", "Press Q: Drop an item");
+            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
+                           "Press X: Drop all items\n" +
+                           "Press Q: Drop an item");
+
             gameInstructions.AddInstruction("equip", "Press L/R: Equip a weapon");
             return this;
         }
@@ -67,8 +70,10 @@ namespace LabyrinthGame
         public DungeonBuilder AddModifiedWeapons(int x = 10)
         {
             dungeon.DistributeModifiedWeapons(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item");
-            gameInstructions.AddInstruction("drop", "Press Q: Drop an item");
+            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
+                            "Press X: Drop all items\n" +
+                            "Press Q: Drop an item");
+
             gameInstructions.AddInstruction("equip", "Press L/R: Equip a weapon");
             return this;
         }
@@ -76,8 +81,9 @@ namespace LabyrinthGame
         public DungeonBuilder AddPotions(int x = 10)
         {
             dungeon.DistributePotions(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item");
-            gameInstructions.AddInstruction("drop", "Press Q: Drop an item");
+            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
+                           "Press X: Drop all items\n" +
+                           "Press Q: Drop an item");
             gameInstructions.AddInstruction("potion", "Press P: Drink a potion");
             return this;
         }
