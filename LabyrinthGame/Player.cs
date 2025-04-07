@@ -21,7 +21,7 @@ namespace LabyrinthGame
         public Attributes attributes { get; set; } = new Attributes();
 
         public List<IItem> Inventory { get; set; } = new List<IItem>();
-        public const int InventoryCapacity = 9;
+        public const int InventoryCapacity = 8;
 
         public int GoldCount { get; set; }
         public int CoinCount { get; set; }
@@ -35,74 +35,23 @@ namespace LabyrinthGame
             dungeon = _dungeon;
         }
 
-
-        public void ProcessMovement()
+        public void Move(Point newPositon)
         {
-            if (dungeon == null || dungeon.Tiles == null)
-                throw new Exception();
-
-            if (Console.KeyAvailable)
+            if (newPositon != position && dungeon.InBounds(newPositon) && dungeon.Tiles[newPositon.X, newPositon.Y] != Tile.Wall)
             {
-                Point newPosition = position;
-                var key = Console.ReadKey(true);
-
-                if (key.Key == ConsoleKey.I)
-                {
-                    DisplayManager.Instance.DisplayInstructions();
-                    return;
-                }
-                if (key.Key == ConsoleKey.R)
-                {
-                    EquipFromInventory(false);
-                    return;
-                }
-                if (key.Key == ConsoleKey.L)
-                {
-                    EquipFromInventory(true);
-                    return;
-                }
-                if (key.Key == ConsoleKey.E)
-                {
-                    PickUpItem();
-                    return;
-                }
-                if (key.Key == ConsoleKey.Q)
-                {
-                    DropItem();
-                    return;
-                }
-                if (key.Key == ConsoleKey.Escape)
-                    Environment.Exit(0);
-                if (key.Key == ConsoleKey.A)
-                    newPosition.X--;
-                if (key.Key == ConsoleKey.D)
-                    newPosition.X++;
-                if (key.Key == ConsoleKey.W)
-                    newPosition.Y--;
-                if (key.Key == ConsoleKey.S)
-                    newPosition.Y++;
-
-
-                while (Console.KeyAvailable)
-                    _ = Console.ReadKey(true);
-
-                if (newPosition != position && dungeon.InBounds(newPosition) && dungeon.Tiles[newPosition.X, newPosition.Y] != Tile.Wall)
-                {
-                    position = newPosition;
-                }
-                else if (newPosition != position)
-                {
-                    Console.Beep();
-                }
+                position = newPositon;
+            }
+            else if (newPositon != position)
+            {
+                Console.Beep();
             }
         }
-
 
 
         public void PickUpItem()
         {
             var availableItem = dungeon.ItemMap[position.X, position.Y];
-            if (availableItem != null && availableItem.Any())
+            if (availableItem != null && availableItem.Any() && Inventory.Count() < InventoryCapacity)
             {
                 IItem item = availableItem[0];
                 availableItem.RemoveAt(0);
@@ -115,7 +64,7 @@ namespace LabyrinthGame
                 {
                     GoldCount++;
                 }
-                else if(item.GetName().Contains("Potion"))
+                else if (item.GetName().Contains("Potion"))
                 {
                     item.ApplyEffect(this);
                 }
@@ -224,7 +173,7 @@ namespace LabyrinthGame
             }
         }
 
-        private void EquipFromInventory(bool leftHandFlag)
+        public void EquipFromInventory(bool leftHandFlag)
         {
             var weapons = Inventory.OfType<IWeapon>().ToList();
 
@@ -249,8 +198,6 @@ namespace LabyrinthGame
             }
             Console.Clear();
         }
-
-
 
     }
 }

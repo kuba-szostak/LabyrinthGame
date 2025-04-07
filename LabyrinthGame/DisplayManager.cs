@@ -42,7 +42,7 @@ namespace LabyrinthGame
 
             Point position = new Point(20, 10);
             Player player = new Player(position, dungeon);
-
+            InputHandler chain = InputHandlerFactory.CreateInputHandlerChain();
 
             Console.CursorVisible = false;
 
@@ -60,7 +60,15 @@ namespace LabyrinthGame
                 DisplayHands(player, dungeon.Width + 20, 10);
                 DisplayEnemyInfo(player, dungeon);
 
-                player.ProcessMovement();
+                if(Console.KeyAvailable)
+                {
+                    var key = Console.ReadKey(true);
+                   
+                    chain.HandleInput(key.Key, player);
+
+                    while (Console.KeyAvailable)
+                        _ = Console.ReadKey(true);
+                }
             }
         }
 
