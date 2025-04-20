@@ -1,4 +1,5 @@
 ﻿using LabyrinthGame.Interfaces;
+using LabyrinthGame.Model;
 using System;
 using System.Reflection;
 
