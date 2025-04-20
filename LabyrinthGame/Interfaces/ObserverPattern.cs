@@ -12,6 +12,8 @@ namespace LabyrinthGame.Interfaces
         void Update(Player player);
 
         string GetName();
+
+        string GetRemainingTurns();
     }
 
     public interface ISubject

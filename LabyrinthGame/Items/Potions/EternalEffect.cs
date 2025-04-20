@@ -22,6 +22,8 @@ namespace LabyrinthGame.Items.Potions
 
         public string GetName() => effectName;
 
+        public string GetRemainingTurns() => "(Eternal)";
+
         public void Update(Player player)
         {
 

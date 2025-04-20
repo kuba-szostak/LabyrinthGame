@@ -33,7 +33,7 @@ namespace LabyrinthGame.Items.Potions
             IsEffectStable = isEffectStable;
         }
 
-        public string GetName() => Name + (EffectTime == 0 ? " (Eternal)" : " (Temporal)");
+        public string GetName() => Name;
 
         public void ApplyEffect(Player player)
         {

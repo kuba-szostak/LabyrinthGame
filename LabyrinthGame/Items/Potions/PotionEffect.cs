@@ -27,6 +27,8 @@ namespace LabyrinthGame.Items.Potions
 
         public string GetName() => Name;
 
+        public string GetRemainingTurns() => $"for {remainingTurns.ToString()} turns";
+
 
         public void Apply(Player player)
         {

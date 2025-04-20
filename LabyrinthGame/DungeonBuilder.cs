@@ -11,6 +11,13 @@ namespace LabyrinthGame
         private Dungeon dungeon;
         private GameInstructions gameInstructions = new GameInstructions();
 
+        private bool hasMovement = false;
+        private bool hasPickup = false;
+        private bool hasPotion = false;
+        private bool hasWeapon = false;
+        private bool hasEnemy = false;
+
+
         public DungeonBuilder(int width = 40, int height = 20)
         {
             dungeon = new Dungeon(width, height);
@@ -29,69 +36,58 @@ namespace LabyrinthGame
         public DungeonBuilder AddPaths(int x)
         {
             dungeon.AddRandomPaths(x);
-            gameInstructions.AddInstruction("movement", "W / A / S / D: Move your character");
             return this;
         }
 
         public DungeonBuilder AddChambers(int x)
         {
             dungeon.AddChambers(x);
-            gameInstructions.AddInstruction("movement", "W / A / S / D: Move your character");
+            hasMovement = true;
             return this;
         }
 
         public DungeonBuilder AddCentralRoom()
         {
             dungeon.AddCentralRoom();
-            gameInstructions.AddInstruction("movement", "W / A / S / D: Move your character");
+            hasMovement = true;
             return this;
         }
 
         public DungeonBuilder AddItems(int x = 10)
         {
             dungeon.DistributeItems(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
-                            "Press X: Drop all items\n" +
-                            "Press Q: Drop an item");
+            hasPickup = true;
             return this;
         }
 
         public DungeonBuilder AddWeapons(int x = 10)
         {
             dungeon.DistributeWeapons(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
-                           "Press X: Drop all items\n" +
-                           "Press Q: Drop an item");
-
-            gameInstructions.AddInstruction("equip", "Press L/R: Equip a weapon");
+            hasWeapon = true;
+            hasPickup = true;
             return this;
         }
 
         public DungeonBuilder AddModifiedWeapons(int x = 10)
         {
             dungeon.DistributeModifiedWeapons(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
-                            "Press X: Drop all items\n" +
-                            "Press Q: Drop an item");
-
-            gameInstructions.AddInstruction("equip", "Press L/R: Equip a weapon");
+            hasWeapon = true;
+            hasPickup = true;
             return this;
         }
 
         public DungeonBuilder AddPotions(int x = 10)
         {
             dungeon.DistributePotions(x);
-            gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
-                           "Press X: Drop all items\n" +
-                           "Press Q: Drop an item");
-            gameInstructions.AddInstruction("potion", "Press P: Drink a potion");
+            hasPickup = true;
+            hasPotion = true;
             return this;
         }
 
         public DungeonBuilder AddEnemies(int x)
         {
             dungeon.DistributeEnemies(x);
-            gameInstructions.AddInstruction("enemy", "Be cautious! Enemies are present.");
+            hasEnemy = true;
             return this;
         }
         public Dungeon Build()
@@ -101,6 +97,29 @@ namespace LabyrinthGame
 
         public GameInstructions GetInstructions()
         {
+            if (hasMovement)
+            {
+                gameInstructions.AddInstruction("movement", "W / A / S / D: Move your character");
+            }
+            if (hasPickup)
+            {
+                gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
+                          "Press X: Drop all items\n" +
+                          "Press Q: Drop an item");
+            }
+            if (hasPotion)
+            {
+                gameInstructions.AddInstruction("potion", "Press P: Drink a potion");
+            }
+            if (hasWeapon)
+            {
+                gameInstructions.AddInstruction("equip", "Press L/R: Equip a weapon");
+            }
+            if (hasEnemy)
+            {
+                gameInstructions.AddInstruction("enemy", "Be cautious! Enemies are present.");
+            }
+
             return gameInstructions;
         }
     }

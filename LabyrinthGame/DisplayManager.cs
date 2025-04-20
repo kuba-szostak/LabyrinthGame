@@ -147,7 +147,7 @@ namespace LabyrinthGame
             foreach (var effect in player.ActiveEffects)
             {
                 Console.SetCursorPosition(cursorX, ++line);
-                Console.WriteLine($"\t ({effect.GetName()}");
+                Console.WriteLine($"\t {effect.GetName()} {effect.GetRemainingTurns()}");
             }
         }
 
