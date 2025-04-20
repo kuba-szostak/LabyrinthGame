@@ -1,11 +1,13 @@
-﻿using System;
+﻿using LabyrinthGame.Core;
+using LabyrinthGame.Model;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame
+namespace LabyrinthGame.UI
 {
 
     public abstract class InputHandler

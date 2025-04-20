@@ -1,5 +1,6 @@
 ﻿using LabyrinthGame.Interfaces;
 using LabyrinthGame.Items.Potions;
+using LabyrinthGame.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +13,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame
+namespace LabyrinthGame.Model
 {
     public class Player : ISubject
     {

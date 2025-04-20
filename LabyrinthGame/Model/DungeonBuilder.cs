@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LabyrinthGame.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame
+namespace LabyrinthGame.Model
 {
     public class DungeonBuilder
     {

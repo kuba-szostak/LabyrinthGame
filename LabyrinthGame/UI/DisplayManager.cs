@@ -1,7 +1,9 @@
-﻿using LabyrinthGame.Interfaces;
+﻿using LabyrinthGame.Core;
+using LabyrinthGame.Interfaces;
 using LabyrinthGame.Items;
 using LabyrinthGame.Items.Decorators;
 using LabyrinthGame.Items.Potions;
+using LabyrinthGame.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace LabyrinthGame
+namespace LabyrinthGame.UI
 {
     public class DisplayManager
     {

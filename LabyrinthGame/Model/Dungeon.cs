@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text.Json;
 
-namespace LabyrinthGame
+namespace LabyrinthGame.Model
 {
     public enum Tile { Wall, Floor }
 
@@ -230,6 +230,21 @@ namespace LabyrinthGame
                     template.HandsRequired
                 );
 
+                // randomly wrapping a weapon in one of the 3 possible necessary decorators
+                int category = rand.Next(0, 3);
+                switch(category)
+                {
+                    case 0:
+                        weapon = new HeavyCategoryDecorator(weapon);
+                        break;
+                    case 1:
+                        weapon = new LightCategoryDecorator(weapon);
+                        break;
+                    case 2:
+                        weapon = new MagicCategoryDecorator(weapon);
+                        break;
+                }
+
 
                 while (true)
                 {
@@ -273,6 +288,20 @@ namespace LabyrinthGame
                     template.HandsRequired
                 );
 
+                int category = rand.Next(0, 3);
+                switch (category)
+                {
+                    case 0:
+                        weapon = new HeavyCategoryDecorator(weapon);
+                        break;
+                    case 1:
+                        weapon = new LightCategoryDecorator(weapon);
+                        break;
+                    case 2:
+                        weapon = new MagicCategoryDecorator(weapon);
+                        break;
+                }
+
                 int numberOfModifiers = rand.Next(1, 4);
                 for (int j = 0; j < numberOfModifiers; j++)
                 {
@@ -282,7 +311,7 @@ namespace LabyrinthGame
                     {
                         WeaponDamageDecoratorTemplate modifier = gameData.WeaponDamageDecorators[rand.Next(gameData.WeaponDamageDecorators.Count)];
 
-                        weapon = new DamageWeaponDecorator<IWeapon>(weapon, modifier.Name, baseDamage => (int)(baseDamage + (modifier.DamageBonus ?? 0)));
+                        weapon = new DamageWeaponDecorator<IWeapon>(weapon, modifier.Name, baseDamage => baseDamage + (modifier.DamageBonus ?? 0));
                     }
                     else
                     {

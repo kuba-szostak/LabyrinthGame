@@ -1,6 +1,6 @@
-﻿using LabyrinthGame;
-using LabyrinthGame.Items;
+﻿using LabyrinthGame.Items;
 using LabyrinthGame.Items.Decorators;
+using LabyrinthGame.UI;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
