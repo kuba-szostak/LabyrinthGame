@@ -1,5 +1,4 @@
-﻿using LabyrinthGame.Core;
-using LabyrinthGame.Model;
+﻿using LabyrinthGame.Model;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -87,11 +86,11 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class X_Handler : InputHandler
+    public class G_Handler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
-            if (key == ConsoleKey.X)
+            if (key == ConsoleKey.G)
             {
                 player.DropAllItems();
                 DisplayManager.Instance.DisplayConsoleClear();
@@ -147,6 +146,49 @@ namespace LabyrinthGame.UI
             if (key == ConsoleKey.L)
             {
                 player.EquipFromInventory(true);
+            }
+            else
+            {
+                base.HandleInput(key, player);
+            }
+        }
+    }
+
+    public class Z_Handler : InputHandler
+    {
+        public override void HandleInput(ConsoleKey key, Player player)
+        {
+            if (key == ConsoleKey.Z)
+            {
+                player.Attack(AttackType.Normal);
+            }
+            else
+            {
+                base.HandleInput(key, player);
+            }
+        }
+    }
+    public class X_Handler : InputHandler
+    {
+        public override void HandleInput(ConsoleKey key, Player player)
+        {
+            if (key == ConsoleKey.X)
+            {
+                player.Attack(AttackType.Stealth);
+            }
+            else
+            {
+                base.HandleInput(key, player);
+            }
+        }
+    }
+    public class C_Handler : InputHandler
+    {
+        public override void HandleInput(ConsoleKey key, Player player)
+        {
+            if (key == ConsoleKey.C)
+            {
+                player.Attack(AttackType.Magic);
             }
             else
             {
@@ -214,8 +256,8 @@ namespace LabyrinthGame.UI
                 InputHandler eHandler = new E_Handler();
                 inputHandlers.Add(eHandler);
 
-                InputHandler xHandler = new X_Handler();
-                inputHandlers.Add(xHandler);
+                InputHandler gHandler = new G_Handler();
+                inputHandlers.Add(gHandler);
 
                 InputHandler qHandler = new Q_Handler();
                 inputHandlers.Add(qHandler);
@@ -228,6 +270,13 @@ namespace LabyrinthGame.UI
 
                 InputHandler rHandler = new R_Handler();
                 inputHandlers.Add(rHandler);
+
+                InputHandler zHandler = new Z_Handler();
+                inputHandlers.Add(zHandler);
+                InputHandler xHandler = new X_Handler();
+                inputHandlers.Add(xHandler);
+                InputHandler cHandler = new C_Handler();
+                inputHandlers.Add(cHandler);
             }
             if(instructions.ContainsInstruction("potion"))
             {

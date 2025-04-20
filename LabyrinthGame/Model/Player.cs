@@ -1,4 +1,5 @@
-﻿using LabyrinthGame.Interfaces;
+﻿using LabyrinthGame.Combat;
+using LabyrinthGame.Interfaces;
 using LabyrinthGame.Items.Potions;
 using LabyrinthGame.UI;
 using System;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace LabyrinthGame.Model
 {
+    public enum AttackType { Normal, Stealth, Magic }
     public class Player : ISubject
     {
         public Point position;
@@ -77,6 +79,72 @@ namespace LabyrinthGame.Model
             {
                 Console.Beep();
             }
+        }
+
+        public void Attack(AttackType type)
+        {
+
+            //first we check if there are any enemies nearby
+            Enemy? enemy = FindEnemy();
+            if (enemy == null ||
+                (LeftHand == null && RightHand == null)) // we also want to return if we dont have any weapons equipped
+            {
+                DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
+                return;
+            }
+
+            // pick the right attack visitor
+            IWeaponVisitor<int> visitor = type switch
+            {
+                AttackType.Normal => new NormalAttackVisitor(),
+                AttackType.Stealth => new StealthAttackVisitor(),
+                AttackType.Magic => new MagicAttackVisitor(),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
+            //compute damage
+
+            int damage = 0;
+            if (LeftHand == RightHand) // when the weapon is Two-Handed, we dont want to make the damage x2
+            {
+                damage = LeftHand?.Accept(visitor) ?? 0;
+            }
+            else // if it's not Two-Handed, we just sum damage of weapons from both hands
+            {
+                int damageL = LeftHand?.Accept(visitor) ?? 0;
+                int damageR = RightHand?.Accept(visitor) ?? 0;
+                damage = damageR + damageL;
+            }
+
+            // TO BE IMPLEMENTED
+
+            // ENEMY TAKING DAMAGE
+            // ENEMY DEALING DAMAGE TO PLAYER
+        }
+
+        private Enemy? FindEnemy()
+        {
+
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+
+                    int nx = this.position.X + dx;
+                    int ny = this.position.Y + dy;
+
+                    if (dungeon.InBounds(new Point(nx, ny)))
+                    {
+                        if (dungeon.EnemyMap[nx, ny].Any())
+                        {
+                            var enemy = dungeon.EnemyMap[nx, ny][0];
+                            return enemy;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
 

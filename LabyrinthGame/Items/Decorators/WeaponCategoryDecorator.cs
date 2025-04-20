@@ -24,7 +24,6 @@ namespace LabyrinthGame.Items.Decorators
 
         public override string Icon => base.Icon;
     }
-
     public class HeavyCategoryDecorator : WeaponCategoryDecorator
     {
         public HeavyCategoryDecorator(IWeapon weapon)

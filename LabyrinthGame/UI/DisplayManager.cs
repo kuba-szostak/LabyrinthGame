@@ -1,5 +1,4 @@
-﻿using LabyrinthGame.Core;
-using LabyrinthGame.Interfaces;
+﻿using LabyrinthGame.Interfaces;
 using LabyrinthGame.Items;
 using LabyrinthGame.Items.Decorators;
 using LabyrinthGame.Items.Potions;
@@ -33,14 +32,14 @@ namespace LabyrinthGame.UI
             var builder = new DungeonBuilder(40, 20)
                 .BuildEmptyDungeon()
                 .BuildFilledDungeon()
-                //.AddPaths(20)
-                //.AddChambers(5)
+                .AddPaths(20)
+                .AddChambers(5)
                 .AddCentralRoom()
-                //.AddItems(10)
-                //.AddWeapons(10)
+                .AddItems(10)
+                .AddWeapons(10)
                 .AddModifiedWeapons(10)
-                .AddPotions(30);
-            //.AddEnemies(3);
+                .AddPotions(30)
+                .AddEnemies(3);
 
             Dungeon dungeon = builder.Build();
             GameInstructions instructions = builder.GetInstructions();

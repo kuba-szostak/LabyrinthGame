@@ -1,4 +1,4 @@
-﻿using LabyrinthGame.Core;
+﻿using LabyrinthGame.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,16 +105,17 @@ namespace LabyrinthGame.Model
             if (hasPickup)
             {
                 gameInstructions.AddInstruction("pickup", "Press E: Pick up an item\n" +
-                          "Press X: Drop all items\n" +
-                          "Press Q: Drop an item");
+                          "G: Drop all items\n" +
+                          "Q: Drop an item");
             }
             if (hasPotion)
             {
-                gameInstructions.AddInstruction("potion", "Press P: Drink a potion");
+                gameInstructions.AddInstruction("potion", "P: Drink a potion");
             }
             if (hasWeapon)
             {
-                gameInstructions.AddInstruction("equip", "Press L/R: Equip a weapon");
+                gameInstructions.AddInstruction("equip", "L/R: Equip a weapon\n" +
+                    "Z / X / C: (Normal/Stealth/Magic) Attack");
             }
             if (hasEnemy)
             {
