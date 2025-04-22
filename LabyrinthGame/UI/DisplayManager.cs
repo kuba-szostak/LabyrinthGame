@@ -51,7 +51,7 @@ namespace LabyrinthGame.UI
 
             Console.CursorVisible = false;
 
-            while (true)
+            while (!player.IsDead)
             {
                 Console.SetCursorPosition(0, 0);
                 PrintMap(dungeon, player);
@@ -78,6 +78,11 @@ namespace LabyrinthGame.UI
 
                 // player.UpdateEffects();
             }
+
+            DisplayConsoleClear();
+            DisplayGameOver();
+
+            Environment.Exit(0);
         }
 
         public void PrintMap(Dungeon dungeon, Player player)
@@ -118,6 +123,60 @@ namespace LabyrinthGame.UI
             }
         }
 
+        public void DisplayGameOver()
+        {
+            Console.Clear();
+            int w = Console.WindowWidth;
+            int h = Console.WindowHeight;
+
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            string horizontal = new string('═', w - 2);
+            Console.SetCursorPosition(0, 0);
+            Console.Write($"╔{horizontal}╗");
+            for (int y = 1; y < h - 1; y++)
+            {
+                Console.SetCursorPosition(0, y);
+                Console.Write("║");
+                Console.SetCursorPosition(w - 1, y);
+                Console.Write("║");
+            }
+            Console.SetCursorPosition(0, h - 1);
+            Console.Write($"╚{horizontal}╝");
+
+            var art = new[]
+     {
+        "  ____                         ___                 ",
+        " / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __ ",
+        "| |  _ / _` | '_ ` _ \\ / _ \\ | | | \\ \\ / / _ \\ '__|",
+        "| |_| | (_| | | | | | |  __/ | |_| |\\ V /  __/ |   ",
+        " \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|   "
+    };
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            int artHeight = art.Length;
+            int startY = (h - artHeight) / 2 - 1;
+            foreach (var line in art)
+            {
+                int x = (w - line.Length) / 2;
+                Console.SetCursorPosition(x, startY++);
+                Console.Write(line);
+            }
+
+            string msg1 = "You died...";
+            string msg2 = "Press any key to exit.";
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.SetCursorPosition((w - msg1.Length) / 2, startY + 1);
+            Console.Write(msg1);
+            Console.SetCursorPosition((w - msg2.Length) / 2, startY + 3);
+            Console.Write(msg2);
+
+            Console.ResetColor();
+            Console.SetCursorPosition(0, h - 1);
+            Console.ReadKey(true);
+        }
+
+
+
 
         public void DisplayConsoleClear()
         {
@@ -138,7 +197,7 @@ namespace LabyrinthGame.UI
             Console.SetCursorPosition(cursorX, line);
             Console.WriteLine("Active Effects: ");
 
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Console.SetCursorPosition(cursorX, ++line);
                 Console.Write(new string(' ', 40));
@@ -314,7 +373,7 @@ namespace LabyrinthGame.UI
                         if (map.EnemyMap[nx, ny].Any())
                         {
                             var enemy = map.EnemyMap[nx, ny][0];
-                            Console.WriteLine($"There is a {enemy.GetName()} ({enemy.Icon}) nearby!");
+                            Console.WriteLine($"There is a {enemy.GetName()} nearby!");
                             foundEnemy = true;
                         }
                     }

@@ -60,6 +60,10 @@ namespace LabyrinthGame.Model
     {
         public string Name { get; set; } = string.Empty;
         public string Icon { get; set; } = string.Empty;
+
+        public int HP { get; set; }
+        public int Armor { get; set; }
+        public int Damage { get; set; }
     }
 
 }

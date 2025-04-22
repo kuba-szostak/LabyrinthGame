@@ -140,15 +140,24 @@
     "Enemies": [
         {
             "Name": "Creeper",
-            "Icon": "C"
+            "Icon": "C",
+            "HP": 20,
+            "Armor": 5,
+            "Damage" :  20
         },
         {
             "Name": "Skeleton",
-            "Icon": "S"
+            "Icon": "S",
+            "HP": 20,
+            "Armor": 5,
+            "Damage": 20
         },
         {
             "Name": "Zomie",
-            "Icon": "Z"
+            "Icon": "Z",
+            "HP": 20,
+            "Armor": 5,
+            "Damage": 20
         }
     ]
 }

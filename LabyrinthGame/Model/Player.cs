@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +37,7 @@ namespace LabyrinthGame.Model
         private readonly List<IObserver> _observers = new List<IObserver>();
         public IEnumerable<IObserver> ActiveEffects => _observers;
 
-
+        public bool IsDead => attributes.Health <= 0;
 
 
 
@@ -85,13 +86,15 @@ namespace LabyrinthGame.Model
         {
 
             //first we check if there are any enemies nearby
-            Enemy? enemy = FindEnemy();
-            if (enemy == null ||
+            var result = FindEnemy();
+            if (result == null ||
                 (LeftHand == null && RightHand == null)) // we also want to return if we dont have any weapons equipped
             {
                 DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
                 return;
             }
+
+            var (enemy, enemyPos) = result.Value;
 
             // pick the right attack visitor
             IWeaponVisitor<int> visitor = type switch
@@ -119,10 +122,40 @@ namespace LabyrinthGame.Model
             // TO BE IMPLEMENTED
 
             // ENEMY TAKING DAMAGE
-            // ENEMY DEALING DAMAGE TO PLAYER
+            enemy.ReceiveDamage(damage);
+            if (enemy.IsDead) // if he's dead, remove him from the map
+            {
+                dungeon.EnemyMap[enemyPos.X, enemyPos.Y].Remove(enemy);
+                return;
+            }
+            // else he deals back damage to player
+
+            IWeaponVisitor<int> defenseVisitor = type switch
+            {
+                AttackType.Normal => new NormalDefenseVisitor(attributes),
+                AttackType.Stealth => new StealthDefenseVisitor(attributes),
+                AttackType.Magic => new MagicDefenseVisitor(attributes),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
+            int defense = 0;
+            if (LeftHand == RightHand) 
+            {
+                defense = LeftHand?.Accept(defenseVisitor) ?? 0;
+            }
+            else
+            {
+                int defenseR = LeftHand?.Accept(defenseVisitor) ?? 0;
+                int defenseL = RightHand?.Accept(defenseVisitor) ?? 0;
+                defense = defenseR + defenseL;
+            }
+
+            int damageToPlayer = Math.Max(enemy.Damage - defense, 0);
+            attributes.Health -= damageToPlayer;
+
         }
 
-        private Enemy? FindEnemy()
+        private (Enemy, Point)? FindEnemy()
         {
 
             for (int dx = -1; dx <= 1; dx++)
@@ -138,7 +171,8 @@ namespace LabyrinthGame.Model
                         if (dungeon.EnemyMap[nx, ny].Any())
                         {
                             var enemy = dungeon.EnemyMap[nx, ny][0];
-                            return enemy;
+                            Point enemyPos = new Point(nx, ny);
+                            return (enemy, enemyPos);
                         }
                     }
                 }
@@ -208,6 +242,14 @@ namespace LabyrinthGame.Model
 
         public void Equip(IWeapon weapon, bool leftHandFlag)
         {
+            if (LeftHand != null && LeftHand == RightHand)
+            {
+                LeftHand.SubstractEffect(this);
+                Inventory.Add(LeftHand);
+                LeftHand = null;
+                RightHand = null;
+            }
+
             if (weapon.IsTwoHanded)
             {
                 if (LeftHand != null)
@@ -295,7 +337,7 @@ namespace LabyrinthGame.Model
             {
                 Console.Beep();
             }
-            Console.Clear();
+            DisplayManager.Instance.DisplayConsoleClear();
         }
 
         public void DrinkPotion()

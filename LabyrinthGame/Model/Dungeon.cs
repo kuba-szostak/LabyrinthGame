@@ -288,20 +288,6 @@ namespace LabyrinthGame.Model
                     template.HandsRequired
                 );
 
-                // randomly wrapping a weapon in one of the 3 possible necessary decorators
-                int category = rand.Next(0, 3);
-                switch (category)
-                {
-                    case 0:
-                        weapon = new HeavyCategoryDecorator(weapon);
-                        break;
-                    case 1:
-                        weapon = new LightCategoryDecorator(weapon);
-                        break;
-                    case 2:
-                        weapon = new MagicCategoryDecorator(weapon);
-                        break;
-                }
 
                 int numberOfModifiers = rand.Next(1, 4);
                 for (int j = 0; j < numberOfModifiers; j++)
@@ -320,6 +306,21 @@ namespace LabyrinthGame.Model
                         weapon = new EffectWeaponDecorator<IWeapon>(weapon, modifier.Name, modifier.EffectAttribute, modifier.EffectValue ?? 0);
                     }
 
+                }
+
+                // randomly wrapping a weapon in one of the 3 possible necessary decorators
+                int category = rand.Next(0, 3);
+                switch (category)
+                {
+                    case 0:
+                        weapon = new HeavyCategoryDecorator(weapon);
+                        break;
+                    case 1:
+                        weapon = new LightCategoryDecorator(weapon);
+                        break;
+                    case 2:
+                        weapon = new MagicCategoryDecorator(weapon);
+                        break;
                 }
 
                 while (true)
@@ -394,7 +395,7 @@ namespace LabyrinthGame.Model
             for (int i = 0; i < numberOfEnemies; i++)
             {
                 EnemyTemplate template = gameData.Enemies[rand.Next(gameData.Enemies.Count)];
-                Enemy enemy = new Enemy(template.Name, template.Icon);
+                Enemy enemy = new Enemy(template.Name, template.Icon, template.HP, template.Armor, template.Damage);
 
 
                 while (true)
