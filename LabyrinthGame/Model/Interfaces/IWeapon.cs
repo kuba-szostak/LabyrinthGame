@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.Interfaces
+namespace LabyrinthGame.Model.Interfaces
 {
     public interface IWeapon : IItem
     {

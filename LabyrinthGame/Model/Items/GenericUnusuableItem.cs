@@ -1,12 +1,12 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Model;
+﻿using LabyrinthGame.Model;
+using LabyrinthGame.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.Items
+namespace LabyrinthGame.Model.Items
 {
     public class GenericUnusuableItem : IItem
     {
@@ -15,8 +15,8 @@ namespace LabyrinthGame.Items
 
         public GenericUnusuableItem(string name, string icon)
         {
-            this.Name = name;
-            this.Icon = icon;
+            Name = name;
+            Icon = icon;
         }
 
         public void ApplyEffect(Player player)

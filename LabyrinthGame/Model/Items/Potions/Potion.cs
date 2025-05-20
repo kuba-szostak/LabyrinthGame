@@ -1,10 +1,10 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Model;
+﻿using LabyrinthGame.Model;
+using LabyrinthGame.Model.Interfaces;
 using System;
 using System.Numerics;
 using System.Reflection;
 
-namespace LabyrinthGame.Items.Potions
+namespace LabyrinthGame.Model.Items.Potions
 {
     public class Potion : IItem
     {

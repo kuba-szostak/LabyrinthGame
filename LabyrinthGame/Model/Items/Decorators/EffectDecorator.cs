@@ -1,9 +1,9 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Model;
+﻿using LabyrinthGame.Model;
+using LabyrinthGame.Model.Interfaces;
 using System;
 using System.Reflection;
 
-namespace LabyrinthGame.Items.Decorators
+namespace LabyrinthGame.Model.Items.Decorators
 {
     // Generic decorator for applying attribute effects to any IItem
     public class EffectDecorator : ItemDecorator

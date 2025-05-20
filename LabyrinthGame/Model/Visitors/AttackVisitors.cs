@@ -1,13 +1,13 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Items.Decorators;
-using LabyrinthGame.Model;
+﻿using LabyrinthGame.Model;
+using LabyrinthGame.Model.Interfaces;
+using LabyrinthGame.Model.Items.Decorators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.Combat
+namespace LabyrinthGame.Model.Visitors
 {
     public class NormalAttackVisitor : IWeaponVisitor<int>
     {

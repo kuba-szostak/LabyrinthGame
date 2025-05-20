@@ -1,4 +1,7 @@
 ﻿using LabyrinthGame.Model;
+using LabyrinthGame.Model.Interfaces;
+using LabyrinthGame.Model.Items.Potions;
+using LabyrinthGame.View;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.UI
+namespace LabyrinthGame.Controller
 {
 
     public abstract class InputHandler
@@ -25,30 +28,37 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class WSAD_Handler : InputHandler
+    public class MovementHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.W || key == ConsoleKey.S || key == ConsoleKey.A || key == ConsoleKey.D)
             {
-                Point newPosition = player.position;
-                switch (key)
+                try
                 {
-                    case ConsoleKey.W:
-                        newPosition.Y--;
-                        break;
-                    case ConsoleKey.S:
-                        newPosition.Y++;
-                        break;
-                    case ConsoleKey.A:
-                        newPosition.X--;
-                        break;
-                    case ConsoleKey.D:
-                        newPosition.X++;
-                        break;
+                    Point newPosition = player.position;
+                    switch (key)
+                    {
+                        case ConsoleKey.W:
+                            newPosition.Y--;
+                            break;
+                        case ConsoleKey.S:
+                            newPosition.Y++;
+                            break;
+                        case ConsoleKey.A:
+                            newPosition.X--;
+                            break;
+                        case ConsoleKey.D:
+                            newPosition.X++;
+                            break;
+                    }
+                    player.Move(newPosition);
+                    player.UpdateEffects();
                 }
-                player.Move(newPosition);
-                player.UpdateEffects();
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -57,13 +67,20 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class E_Handler : InputHandler
+    public class PickupHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.E)
             {
-                player.PickUpItem();
+                try
+                {
+                    player.PickUpItem();
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -71,13 +88,22 @@ namespace LabyrinthGame.UI
             }
         }
     }
-    public class Q_Handler : InputHandler
+    public class DropHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.Q)
             {
-                player.DropItem();
+                try
+                {
+                    int index = InputHelpers.SelectItemToDrop(player);
+                    player.DropItem(index);
+                    DisplayManager.Instance.DisplayConsoleClear();
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -86,14 +112,21 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class G_Handler : InputHandler
+    public class DropAllHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.G)
             {
-                player.DropAllItems();
-                DisplayManager.Instance.DisplayConsoleClear();
+                try
+                {
+                    player.DropAllItems();
+                    DisplayManager.Instance.DisplayConsoleClear();
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -102,11 +135,11 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class I_Handler : InputHandler
+    public class InstructionsHandler : InputHandler
     {
         private readonly GameInstructions instructions;
 
-        public I_Handler(GameInstructions instructions)
+        public InstructionsHandler(GameInstructions instructions)
         {
             this.instructions = instructions;
         }
@@ -116,6 +149,7 @@ namespace LabyrinthGame.UI
             if (key == ConsoleKey.I)
             {
                 DisplayManager.Instance.DisplayInstructions(instructions);
+                Console.ReadKey(true);
             }
             else
             {
@@ -124,13 +158,22 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class R_Handler : InputHandler
+    public class RightHandHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.R)
             {
-                player.EquipFromInventory(false);
+                try
+                {
+                    int index = InputHelpers.SelectItemToEquip(player, player.Inventory.OfType<IWeapon>().ToList(), false);
+                    player.EquipFromInventory(false, index);
+                    DisplayManager.Instance.DisplayConsoleClear();
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -139,13 +182,23 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class L_Handler : InputHandler
+    public class LeftHandHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.L)
             {
-                player.EquipFromInventory(true);
+                try
+                {
+                    int index = InputHelpers.SelectItemToEquip(player, player.Inventory.OfType<IWeapon>().ToList(), true);
+                    player.EquipFromInventory(true, index);
+                    DisplayManager.Instance.DisplayConsoleClear();
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
+
             }
             else
             {
@@ -154,13 +207,21 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class Z_Handler : InputHandler
+    public class NormalAttackHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.Z)
             {
-                player.Attack(AttackType.Normal);
+                try
+                {
+                    player.Attack(AttackType.Normal);
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
+
             }
             else
             {
@@ -168,13 +229,20 @@ namespace LabyrinthGame.UI
             }
         }
     }
-    public class X_Handler : InputHandler
+    public class StealthAttackHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.X)
             {
-                player.Attack(AttackType.Stealth);
+                try
+                {
+                    player.Attack(AttackType.Stealth);
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -182,13 +250,20 @@ namespace LabyrinthGame.UI
             }
         }
     }
-    public class C_Handler : InputHandler
+    public class MagicAttackHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.C)
             {
-                player.Attack(AttackType.Magic);
+                try
+                {
+                    player.Attack(AttackType.Magic);
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -197,13 +272,23 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class P_Handler : InputHandler
+    public class PotionHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.P)
             {
-                player.DrinkPotion();
+                try
+                {
+                    int index = InputHelpers.SelectPotionToDrink(player,
+                        player.Inventory.OfType<Potion>().ToList());
+                    player.DrinkPotion(index);
+                    DisplayManager.Instance.DisplayConsoleClear();
+                }
+                catch
+                {
+                    DisplayManager.Instance.DisplayInvalidInput();
+                }
             }
             else
             {
@@ -212,7 +297,7 @@ namespace LabyrinthGame.UI
         }
     }
 
-    public class ESC_Handler : InputHandler
+    public class ExitHandler : InputHandler
     {
         public override void HandleInput(ConsoleKey key, Player player)
         {
@@ -236,7 +321,7 @@ namespace LabyrinthGame.UI
         }
         public override void HandleInput(ConsoleKey key, Player player)
         {
-            DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
+            DisplayManager.Instance.DisplayInvalidInput();
         }
     }
 
@@ -248,53 +333,53 @@ namespace LabyrinthGame.UI
 
             if (instructions.ContainsInstruction("movement"))
             {
-                InputHandler wsadHandler = new WSAD_Handler();
+                InputHandler wsadHandler = new MovementHandler();
                 inputHandlers.Add(wsadHandler);
             }
             if (instructions.ContainsInstruction("pickup"))
             {
-                InputHandler eHandler = new E_Handler();
+                InputHandler eHandler = new PickupHandler();
                 inputHandlers.Add(eHandler);
 
-                InputHandler gHandler = new G_Handler();
+                InputHandler gHandler = new DropAllHandler();
                 inputHandlers.Add(gHandler);
 
-                InputHandler qHandler = new Q_Handler();
+                InputHandler qHandler = new DropHandler();
                 inputHandlers.Add(qHandler);
 
             }
             if (instructions.ContainsInstruction("equip"))
             {
-                InputHandler lHandler = new L_Handler();
+                InputHandler lHandler = new LeftHandHandler();
                 inputHandlers.Add(lHandler);
 
-                InputHandler rHandler = new R_Handler();
+                InputHandler rHandler = new RightHandHandler();
                 inputHandlers.Add(rHandler);
 
-                InputHandler zHandler = new Z_Handler();
+                InputHandler zHandler = new NormalAttackHandler();
                 inputHandlers.Add(zHandler);
-                InputHandler xHandler = new X_Handler();
+                InputHandler xHandler = new StealthAttackHandler();
                 inputHandlers.Add(xHandler);
-                InputHandler cHandler = new C_Handler();
+                InputHandler cHandler = new MagicAttackHandler();
                 inputHandlers.Add(cHandler);
             }
-            if(instructions.ContainsInstruction("potion"))
+            if (instructions.ContainsInstruction("potion"))
             {
-                InputHandler pHandler = new P_Handler();
+                InputHandler pHandler = new PotionHandler();
                 inputHandlers.Add(pHandler);
             }
 
 
-            InputHandler iHandler = new I_Handler(instructions);
+            InputHandler iHandler = new InstructionsHandler(instructions);
             inputHandlers.Add(iHandler);
 
-            InputHandler escHandler = new ESC_Handler();
+            InputHandler escHandler = new ExitHandler();
             inputHandlers.Add(escHandler);
 
             InputHandler defaultHandler = new DefaultHandler(dungeon);
             inputHandlers.Add(defaultHandler);
 
-            for(int i = 0; i < inputHandlers.Count() -1; i++)
+            for (int i = 0; i < inputHandlers.Count() - 1; i++)
             {
                 inputHandlers[i].SetNext(inputHandlers[i + 1]);
             }

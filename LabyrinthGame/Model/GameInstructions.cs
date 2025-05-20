@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.UI
+namespace LabyrinthGame.Model
 {
     public class GameInstructions
     {

@@ -1,8 +1,7 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Items;
-using LabyrinthGame.Items.Decorators;
-using LabyrinthGame.Items.Potions;
+﻿using LabyrinthGame.Model.Items;
+using LabyrinthGame.Model.Items.Decorators;
 using LabyrinthGame.Model;
+using LabyrinthGame.Model.Items.Potions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,8 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using LabyrinthGame.Controller;
+using LabyrinthGame.Model.Interfaces;
+using System.Numerics;
 
-namespace LabyrinthGame.UI
+namespace LabyrinthGame.View
 {
     public class DisplayManager
     {
@@ -27,62 +29,20 @@ namespace LabyrinthGame.UI
             get { return instance; }
         }
 
-        public void StartProgram()
+        public void RenderFrame(Player player, Dungeon dungeon)
         {
-            var builder = new DungeonBuilder(40, 20)
-                .BuildEmptyDungeon()
-                .BuildFilledDungeon()
-                .AddPaths(20)
-                .AddChambers(5)
-                .AddCentralRoom()
-                .AddItems(10)
-                .AddWeapons(10)
-                .AddModifiedWeapons(10)
-                .AddPotions(30)
-                .AddEnemies(3);
+            Console.SetCursorPosition(0, 0);
+            DisplayManager.Instance.PrintMap(dungeon, player);
 
-            Dungeon dungeon = builder.Build();
-            GameInstructions instructions = builder.GetInstructions();
+            Console.SetCursorPosition(dungeon.Width + 2, 0);
+            Console.WriteLine($"Press I for instructions");
 
-            Point position = new Point(20, 10);
-            Player player = new Player(position, dungeon);
-
-            InputHandler chain = InputHandlerFactory.CreateInputHandlerChain(instructions, dungeon);
-
-            Console.CursorVisible = false;
-
-            while (!player.IsDead)
-            {
-                Console.SetCursorPosition(0, 0);
-                PrintMap(dungeon, player);
-
-                Console.SetCursorPosition(dungeon.Width + 2, 0);
-                Console.WriteLine($"Press I for instructions");
-
-                DisplayItemInfo(player, dungeon);
-                DisplayInventory(player, dungeon.Width + 2, 10);
-                DisplayActiveEffects(player, dungeon.Width + 40, 2);
-                DisplayAttributes(player, dungeon.Width + 2, 2);
-                DisplayHands(player, dungeon.Width + 20, 10);
-                DisplayEnemyInfo(player, dungeon);
-
-                if (Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey(true);
-
-                    chain.HandleInput(key.Key, player);
-
-                    while (Console.KeyAvailable)
-                        _ = Console.ReadKey(true);
-                }
-
-                // player.UpdateEffects();
-            }
-
-            DisplayConsoleClear();
-            DisplayGameOver();
-
-            Environment.Exit(0);
+            DisplayItemInfo(player, dungeon);
+            DisplayInventory(player, dungeon.Width + 2, 10);
+            DisplayActiveEffects(player, dungeon.Width + 40, 2);
+            DisplayAttributes(player, dungeon.Width + 2, 2);
+            DisplayHands(player, dungeon.Width + 20, 10);
+            DisplayEnemyInfo(player, dungeon);
         }
 
         public void PrintMap(Dungeon dungeon, Player player)
@@ -172,7 +132,6 @@ namespace LabyrinthGame.UI
 
             Console.ResetColor();
             Console.SetCursorPosition(0, h - 1);
-            Console.ReadKey(true);
         }
 
 
@@ -183,10 +142,10 @@ namespace LabyrinthGame.UI
             Console.Clear();
         }
 
-        public void DisplayInvalidInput(int cursorX, int cursorY)
+        public void DisplayInvalidInput()
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.SetCursorPosition(cursorX, cursorY);
+            Console.SetCursorPosition(0, 21);
             Console.WriteLine("Invalid Input");
             Console.ResetColor();
         }
@@ -305,8 +264,6 @@ namespace LabyrinthGame.UI
             Console.WriteLine("Instructions\n");
             Console.WriteLine(instructions.ToString());
             Console.WriteLine("\nPress any key to resume the game...");
-            Console.ReadKey(true);
-            Console.Clear();
         }
 
         public void DisplayItemInfo(Player player, Dungeon map)

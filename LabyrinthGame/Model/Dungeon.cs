@@ -1,7 +1,7 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Items;
-using LabyrinthGame.Items.Decorators;
-using LabyrinthGame.Items.Potions;
+﻿using LabyrinthGame.Model.Interfaces;
+using LabyrinthGame.Model.Items;
+using LabyrinthGame.Model.Items.Decorators;
+using LabyrinthGame.Model.Items.Potions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -179,7 +179,7 @@ namespace LabyrinthGame.Model
             {
                 return;
             }
-            string json = File.ReadAllText("../../../gameData.json");
+            string json = File.ReadAllText("../../../Model/gameData.json");
             GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
             if (gameData == null)
             {
@@ -211,7 +211,7 @@ namespace LabyrinthGame.Model
                 return;
             }
 
-            string json = File.ReadAllText("../../../gameData.json");
+            string json = File.ReadAllText("../../../Model/gameData.json");
             GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
             if (gameData == null)
             {
@@ -267,7 +267,7 @@ namespace LabyrinthGame.Model
                 return;
             }
 
-            string json = File.ReadAllText("../../../gameData.json");
+            string json = File.ReadAllText("../../../Model/gameData.json");
 
             GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
 
@@ -343,7 +343,7 @@ namespace LabyrinthGame.Model
                 return;
             }
 
-            string json = File.ReadAllText("../../../gameData.json");
+            string json = File.ReadAllText("../../../Model/gameData.json");
             GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
             if (gameData == null)
             {
@@ -382,7 +382,7 @@ namespace LabyrinthGame.Model
             if (!HasFloorTiles())
                 return;
 
-            string json = File.ReadAllText("../../../gameData.json");
+            string json = File.ReadAllText("../../../Model/gameData.json");
             GameData? gameData = JsonSerializer.Deserialize<GameData>(json);
             if (gameData == null)
                 throw new InvalidOperationException("Failed to load game data.");

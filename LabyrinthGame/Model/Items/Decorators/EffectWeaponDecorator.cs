@@ -1,5 +1,5 @@
-﻿using LabyrinthGame.Interfaces;
-using LabyrinthGame.Model;
+﻿using LabyrinthGame.Model;
+using LabyrinthGame.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabyrinthGame.Items.Decorators
+namespace LabyrinthGame.Model.Items.Decorators
 {
     // special Decorator for weapons, so that we can apply attributes that have an effect on the player
     public class EffectWeaponDecorator<T> : ItemDecorator, IWeapon where T : IWeapon

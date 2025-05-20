@@ -1,7 +1,7 @@
-﻿using LabyrinthGame.Combat;
-using LabyrinthGame.Interfaces;
-using LabyrinthGame.Items.Potions;
-using LabyrinthGame.UI;
+﻿using LabyrinthGame.Model.Interfaces;
+using LabyrinthGame.Model.Items.Potions;
+using LabyrinthGame.Model.Visitors;
+using LabyrinthGame.Controller;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,6 +14,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Threading.Tasks;
+using LabyrinthGame.View;
 
 namespace LabyrinthGame.Model
 {
@@ -77,9 +78,8 @@ namespace LabyrinthGame.Model
                 position = newPositon;
             }
             else if (newPositon != position)
-            {
-                Console.Beep();
-            }
+                throw new InvalidOperationException("Invalid move");
+
         }
 
         public void Attack(AttackType type)
@@ -89,10 +89,7 @@ namespace LabyrinthGame.Model
             var result = FindEnemy();
             if (result == null ||
                 (LeftHand == null && RightHand == null)) // we also want to return if we dont have any weapons equipped
-            {
-                DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
-                return;
-            }
+                throw new InvalidOperationException("Invalid input");
 
             var (enemy, enemyPos) = result.Value;
 
@@ -119,8 +116,6 @@ namespace LabyrinthGame.Model
                 damage = damageR + damageL;
             }
 
-            // TO BE IMPLEMENTED
-
             // ENEMY TAKING DAMAGE
             enemy.ReceiveDamage(damage);
             if (enemy.IsDead) // if he's dead, remove him from the map
@@ -139,7 +134,7 @@ namespace LabyrinthGame.Model
             };
 
             int defense = 0;
-            if (LeftHand == RightHand) 
+            if (LeftHand == RightHand)
             {
                 defense = LeftHand?.Accept(defenseVisitor) ?? 0;
             }
@@ -217,27 +212,15 @@ namespace LabyrinthGame.Model
             dungeon.ItemMap[position.X, position.Y].Add(item);
         }
 
-        public void DropItem()
+        public void DropItem(int index)
         {
-            if (Inventory.Count == 0)
-            {
-                Console.Beep();
-                return;
-            }
-
-            DisplayManager.Instance.DisplayDropItemMenu(this);
-
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            int index = keyInfo.KeyChar - '1';
 
             if (index >= 0 && index < Inventory.Count)
             {
                 RemoveFromInventory(index);
             }
             else
-            {
-                Console.Beep();
-            }
+                throw new InvalidOperationException();
         }
 
         public void Equip(IWeapon weapon, bool leftHandFlag)
@@ -314,15 +297,9 @@ namespace LabyrinthGame.Model
             }
         }
 
-        public void EquipFromInventory(bool leftHandFlag)
+        public void EquipFromInventory(bool leftHandFlag, int index)
         {
             var weapons = Inventory.OfType<IWeapon>().ToList();
-
-            DisplayManager.Instance.DisplayEquipItemMenu(this, weapons, leftHandFlag);
-
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            int index = keyInfo.KeyChar - '1';
-
             if (index == -1) // case user presses '0'
             {
                 Unequip(leftHandFlag);
@@ -333,27 +310,11 @@ namespace LabyrinthGame.Model
                 Equip(chosenOne, leftHandFlag);
                 Inventory.RemoveAt(index);
             }
-            else
-            {
-                Console.Beep();
-            }
-            DisplayManager.Instance.DisplayConsoleClear();
         }
 
-        public void DrinkPotion()
+        public void DrinkPotion(int index)
         {
             var potions = Inventory.OfType<Potion>().ToList();
-            if (potions.Count == 0)
-            {
-                DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
-                return;
-            }
-
-            DisplayManager.Instance.DisplayPotionMenu(this, potions);
-
-            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-            int index = keyInfo.KeyChar - '1';
-
             if (index >= 0 && index < potions.Count)
             {
                 Potion selectedPotion = potions[index];
@@ -362,12 +323,15 @@ namespace LabyrinthGame.Model
             }
             else
             {
-                DisplayManager.Instance.DisplayInvalidInput(0, dungeon.Height + 1);
+                throw new InvalidOperationException("Invalid input");
             }
         }
 
         public void DropAllItems()
         {
+            if (Inventory.Count == 0)
+                throw new InvalidOperationException("No items to throw out");
+
             foreach (IItem item in Inventory)
             {
                 dungeon.ItemMap[position.X, position.Y].Add(item);
